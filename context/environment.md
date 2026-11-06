@@ -1,4 +1,4 @@
-# Environment — {{CLIENT_NAME}}
+# Environment — Student Concern Agent (Revecast demo)
 
 > Orgs, sandboxes, endpoints and **credential references**. Never credential values.
 
@@ -15,28 +15,27 @@ Record **where** a credential lives, never what it is:
 
 | Purpose | Alias | Type | My Domain / URL | Notes |
 |---|---|---|---|---|
-| Production | | Production | | |
-| UAT | | Sandbox | | |
-| Dev | | Sandbox | | refreshed: |
-
-<!-- Sandbox refreshes change org IDs and user IDs. When one is refreshed, note the DATE here —
-     it explains a whole class of "it worked last week" problems. -->
+| Demo / build | jaxedupde-dev-ed | Developer Edition | jaxedupde-dev-ed.develop.my.salesforce.com | Education Cloud student-success data model present. No Data Cloud. No named credentials or connected apps. |
 
 ## Connected systems
 
 | System | Environment | How we authenticate | Credential reference |
 |---|---|---|---|
-| | | | |
+| Classroom system (LMS) | Simulated | None — sample data | n/a (ADR-004) |
+| Jira | revecast.atlassian.net, project SCA | Orchestrate connector | Orchestrate connection |
+| GitHub | Revecast/Student-Concern-Agent, branch `main` | Orchestrate connector | Orchestrate connection |
+
+## Prerequisites still to check (SCA-2)
+
+- Einstein Generative AI / Agentforce turned on
+- Experience Cloud site for the student portal
+- SMS messaging add-on (Digital Engagement)
+- Slack connection
+- Ready-made Course Search agent
 
 ## Deployment path
 
-> **Not yet filled in.** — How does code actually reach production here? CI/CD? Manual change sets?
-> Who has deploy rights? What is the release window? What is the rollback story?
-
-## Access we hold
-
-> **Not yet filled in.** — What access has the client granted us, to what, and when does it expire?
-> Note anything time-boxed so it does not lapse mid-engagement.
+> **Not yet filled in.** — Design only so far; no build yet.
 
 ## Orgs
 

@@ -40,3 +40,9 @@ that it is real.
      three days, a deploy window, a person who must be in the room. -->
 
 -
+
+## Recorded 2026-11-06
+
+- **Jira SCA has no Story Points, Acceptance Criteria or Definition of Done fields.** All three are written into each ticket's description under headings, so points do not add up on boards or sprint reports. *Hit 2026-11-06 creating the 36-story backlog (SCA-1 to SCA-45, 113 pts).* Add a Story Points field to SCA, then fill it on all stories.
+- **SMS is not proof of identity.** A phone number proves nothing (shared or reassigned phones). Over SMS, require a one-time code to the school email before showing any FERPA data. *Design decision 2026-11-06.*
+- **Data Cloud is not provisioned in jaxedupde-dev-ed.** Anything planned for Data 360 runs in core Salesforce for now. *Found 2026-11-06 during design.*

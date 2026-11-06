@@ -1,5 +1,5 @@
 <!-- orchestrate:template-version: v1.0.0 -->
-# Context — {{CLIENT_NAME}} / {{PROJECT_NAME}}
+# Context — Revecast demo / Student Concern Agent
 
 > **This file is the index.** It is loaded into every Orchestrate session on this repo, so it stays
 > short — target 150 lines, hard ceiling 200. One line per entry pointing at the detail file. Put the
@@ -11,11 +11,7 @@
 
 ## The one-paragraph version
 
-<!-- Replace this. Someone who has never seen this engagement should be able to read this paragraph
-     and know what we are building, for whom, and why it matters. If you cannot write it in a
-     paragraph, that is a finding — say so in context/goals.md. -->
-
-> **Not yet filled in.**
+An Agentforce demo for higher education. A nightly rule-based score spots first-year students whose attendance and classroom logins are dropping. When the score crosses the limit, a Flow alerts the assigned advisor and sends the student a warm check-in offering three meeting times. A student agent (portal + SMS) does the check-in, booking and tutoring questions; an advisor agent (Salesforce + Slack) summarizes the student and drafts outreach. FERPA identity checks, a crisis path to counseling, and a strict "student and assigned advisor only" contact rule are enforced in code. The classroom system is simulated. Status 2026-11-06: designed, backlog in Jira SCA (SCA-1 to SCA-45), nothing built.
 
 ---
 
@@ -31,18 +27,25 @@
 | [`context/handoff.md`](context/handoff.md) | Current state, in progress, next steps | **Start here** if you are picking this up cold |
 | [`context/gotchas.md`](context/gotchas.md) | The things that will bite you | **Before** you assume something works the obvious way |
 
-## Fast facts
+### Decisions (all 2026-11-06, Accepted)
 
-<!-- The handful of things worth carrying inline, so a session that reads ONLY this file is not lost.
-     Keep it to what changes rarely. Anything volatile belongs in handoff.md. -->
+- [ADR-001 NEVER rule: student + assigned advisor only, two exceptions](context/decisions/2026-11-06-never-rule-contacts.md)
+- [ADR-002 Offer meeting times; student picks](context/decisions/2026-11-06-offer-times-not-auto-book.md)
+- [ADR-003 Rule-based risk score, nightly, core Salesforce](context/decisions/2026-11-06-rule-based-risk-score.md)
+- [ADR-004 Fully simulated classroom system](context/decisions/2026-11-06-fully-simulated-classroom-system.md)
+- [ADR-005 Architecture: native patterns first](context/decisions/2026-11-06-architecture-native-patterns.md)
+
+## Fast facts
 
 | | |
 |---|---|
-| Primary Salesforce org | {{SF_ORG_ALIAS}} |
+| Primary Salesforce org | jaxedupde-dev-ed (Developer Edition, no Data Cloud) |
 | Sandbox(es) | *see [`context/environment.md`](context/environment.md)* |
+| Jira project | SCA — 9 epics, 36 stories, 113 pts (SCA-1 to SCA-45) |
 | Delivery methodology | Jax: Launch · Define · Develop · Test · Release · Sustain |
 | Repo | `Revecast/Student-Concern-Agent` |
 | Default branch | `main` |
+| First build story | SCA-2, prerequisites check |
 
 ## Current state
 
@@ -74,7 +77,3 @@
 Patterns, standards and learnings that are **not specific to this client** do not belong here — they go
 to Revecast's central ontology, where every future engagement can benefit from them. Client code and
 client-identifying detail stay in this repo and never leave it.
-
-<!-- Link relevant central patterns here rather than copying them:
-     - [pattern-name](ontology link)
--->
