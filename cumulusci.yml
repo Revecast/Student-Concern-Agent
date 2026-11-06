@@ -1,0 +1,19 @@
+minimum_cumulusci_version: "4.0.1"
+
+project:
+    name: Student-Concern-Agent
+    package:
+        name: {{PROJECT_NAME}}
+        api_version: "64.0"
+    source_format: sfdx
+
+tasks:
+    robot:
+        options:
+            suites: robot/Student-Concern-Agent/tests
+            options:
+                outputdir: robot/Student-Concern-Agent/results
+
+flows:
+    # Add engagement-specific flows here. Keep each flow's purpose in a comment —
+    # a flow whose name no longer matches what it does is worse than no flow.

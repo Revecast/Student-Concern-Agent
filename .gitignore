@@ -1,0 +1,27 @@
+# Salesforce / SFDX
+.sfdx/
+.sf/
+.localdevserver/
+deploy-options.json
+*.dup
+
+# CumulusCI
+.cci/
+robot/**/results/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# NEVER commit credentials. If you are about to add an exception here for a
+# key, token or .env file, that is the signal to put it in the credential
+# vault instead and reference it from context/environment.md.
+.env
+*.key
+*.pem
