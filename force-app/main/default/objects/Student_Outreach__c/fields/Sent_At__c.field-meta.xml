@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata"><fullName>Sent_At__c</fullName><label>Sent At</label><description>When the outreach was sent or attempted.</description><inlineHelpText>When it was sent.</inlineHelpText><businessStatus>Active</businessStatus><type>DateTime</type><required>false</required></CustomField>
