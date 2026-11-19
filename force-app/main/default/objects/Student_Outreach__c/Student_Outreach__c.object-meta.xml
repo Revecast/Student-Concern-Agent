@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+  <description>Outreach log: one record per outreach or handoff the Student Concern Agent makes (check-in, advisor alert, crisis or queue handoff). Proves the agent contacted only the student and the assigned advisor, plus the two written exceptions (counseling center on crisis, advising queue if the advisor is unavailable). Owned by the assigned advisor. SCA-3, ADR-001.</description>
+  <label>Student Outreach</label>
+  <pluralLabel>Student Outreach</pluralLabel>
+  <nameField><displayFormat>OUT-{000000}</displayFormat><label>Outreach Number</label><type>AutoNumber</type></nameField>
+  <deploymentStatus>Deployed</deploymentStatus>
+  <sharingModel>Private</sharingModel>
+  <externalSharingModel>Private</externalSharingModel>
+  <enableActivities>false</enableActivities>
+  <enableBulkApi>true</enableBulkApi>
+  <enableFeeds>false</enableFeeds>
+  <enableHistory>true</enableHistory>
+  <enableReports>true</enableReports>
+  <enableSearch>false</enableSearch>
+  <enableSharing>true</enableSharing>
+  <enableStreamingApi>true</enableStreamingApi>
+  <allowInChatterGroups>false</allowInChatterGroups>
+  <visibility>Public</visibility>
+</CustomObject>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+  <label>SYS – Risk Score Settings Read</label>
+  <description>Read access to the Risk Score Setting custom metadata (weights and alert limit) for the Student Concern Agent's running user and automations. Changing the values stays with admins (Customize Application). SCA-5 / SCA-10.</description>
+  <hasActivationRequired>false</hasActivationRequired>
+  <customMetadataTypeAccesses><enabled>true</enabled><name>Risk_Score_Setting__mdt</name></customMetadataTypeAccesses>
+</PermissionSet>
