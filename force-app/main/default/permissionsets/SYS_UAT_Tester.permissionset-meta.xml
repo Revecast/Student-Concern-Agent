@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>SYS – UAT Tester</label>
+    <description>UAT ONLY - REMOVE BEFORE GO-LIVE. Runs the SF - UAT Send Message Tester screen flow, which calls SUB - Send Student Message unchanged (fix WP-10, SCA-36). Removing this permission set removes the access.</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <flowAccesses><enabled>true</enabled><flow>SF_UAT_Send_Message_Tester</flow></flowAccesses>
+    <flowAccesses><enabled>true</enabled><flow>SUB_Send_Student_Message</flow></flowAccesses>
+</PermissionSet>

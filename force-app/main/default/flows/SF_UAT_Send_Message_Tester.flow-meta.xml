@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>68.0</apiVersion>
+    <description>UAT ONLY - REMOVE BEFORE GO-LIVE (fix WP-10). Gives testers and a browser agent a screen to call SUB - Send Student Message, the only send path (SCA-36). It passes what the tester types straight to that flow, unchanged, so it cannot weaken the contact rule (ADR-001): the recipient role is free text so invalid roles can be tried and must be refused. The student is found by email, as the running user, so an advisor reaches only their own students. Access only through the SYS - UAT Tester permission set.</description>
+    <environments>Default</environments>
+    <interviewLabel>SF – UAT Send Message Tester {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>SF – UAT Send Message Tester</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value><stringValue>LightningFlowBuilder</stringValue></value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value><stringValue>AUTO_LAYOUT_CANVAS</stringValue></value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value><stringValue>LightningFlowBuilder</stringValue></value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <runInMode>DefaultMode</runInMode>
+    <status>Active</status>
+    <decisions>
+        <name>Was_the_Student_Found</name>
+        <label>Was the Student Found?</label>
+        <description>The student must exist and be visible to the running user. Not found means the tester can't see that student (or the email is wrong); nothing is sent.</description>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Show_Student_Not_Found</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Not Found</defaultConnectorLabel>
+        <rules>
+            <name>Student_Found</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Contact</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue><booleanValue>false</booleanValue></rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Send_Student_Message</targetReference>
+            </connector>
+            <label>Found</label>
+        </rules>
+    </decisions>
+    <recordLookups>
+        <name>Get_Contact</name>
+        <label>Get Contact</label>
+        <description>Finds the student by email as the running user, so sharing decides what the tester can reach.</description>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Was_the_Student_Found</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Email</field>
+            <operator>EqualTo</operator>
+            <value><elementReference>ETM_StudentEmail</elementReference></value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Contact</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Name</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <screens>
+        <name>Enter_Test_Message</name>
+        <label>Enter Test Message</label>
+        <description>What the tester wants to send. Every value goes to SUB - Send Student Message unchanged.</description>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Get_Contact</targetReference>
+        </connector>
+        <fields>
+            <name>ETM_Banner</name>
+            <fieldText>&lt;p&gt;&lt;b&gt;UAT only.&lt;/b&gt; This sends a real message through the only send path. Use demo students (their emails can't receive mail).&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>ETM_StudentEmail</name>
+            <dataType>String</dataType>
+            <fieldText>Student email</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>ETM_RecipientRole</name>
+            <dataType>String</dataType>
+            <fieldText>Recipient role (Student, Assigned Advisor or Counseling Center; anything else must be refused)</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>ETM_IsCrisis</name>
+            <dataType>Boolean</dataType>
+            <defaultValue><booleanValue>false</booleanValue></defaultValue>
+            <fieldText>Crisis</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>ETM_Subject</name>
+            <dataType>String</dataType>
+            <defaultValue><stringValue>UAT test message</stringValue></defaultValue>
+            <fieldText>Subject</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>ETM_Body</name>
+            <defaultValue><stringValue>This is a UAT test message. Please ignore.</stringValue></defaultValue>
+            <fieldText>Body</fieldText>
+            <fieldType>LargeTextArea</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Show_Result</name>
+        <label>Show Result</label>
+        <description>Shows exactly what SUB - Send Student Message returned.</description>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>SR_Result</name>
+            <fieldText>&lt;p&gt;Student: {!Get_Contact.Name}&lt;/p&gt;&lt;p&gt;Sent: {!varB_Sent}&lt;/p&gt;&lt;p&gt;Result: {!varT_Result}&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Show_Student_Not_Found</name>
+        <label>Show Student Not Found</label>
+        <description>No visible student has that email. Nothing was sent.</description>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>SSNF_Message</name>
+            <fieldText>&lt;p&gt;Sent: false&lt;/p&gt;&lt;p&gt;Result: No student you can see has the email {!ETM_StudentEmail}. Nothing was sent.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Enter_Test_Message</targetReference>
+        </connector>
+    </start>
+    <subflows>
+        <name>Send_Student_Message</name>
+        <label>Send Student Message</label>
+        <description>Calls the only send path, unchanged.</description>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Show_Result</targetReference>
+        </connector>
+        <flowName>SUB_Send_Student_Message</flowName>
+        <inputAssignments>
+            <name>varT_StudentId</name>
+            <value><elementReference>Get_Contact.Id</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varP_RecipientRole</name>
+            <value><elementReference>ETM_RecipientRole</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varT_Subject</name>
+            <value><elementReference>ETM_Subject</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varT_Body</name>
+            <value><elementReference>ETM_Body</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varB_IsCrisis</name>
+            <value><elementReference>ETM_IsCrisis</elementReference></value>
+        </inputAssignments>
+        <outputAssignments>
+            <assignToReference>varB_Sent</assignToReference>
+            <name>varB_Sent</name>
+        </outputAssignments>
+        <outputAssignments>
+            <assignToReference>varT_Result</assignToReference>
+            <name>varT_Result</name>
+        </outputAssignments>
+    </subflows>
+    <variables>
+        <name>varB_Sent</name>
+        <dataType>Boolean</dataType>
+        <description>True when SUB - Send Student Message sent the message or handed it to a queue.</description>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value><booleanValue>false</booleanValue></value>
+    </variables>
+    <variables>
+        <name>varT_Result</name>
+        <dataType>String</dataType>
+        <description>Result text returned by SUB - Send Student Message.</description>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>
