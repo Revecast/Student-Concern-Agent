@@ -38,6 +38,21 @@ is rejected ("capabilityType … is invalid"); Salesforce has retired the Flex c
 
 Flow trims line breaks in text templates, so grounding items are separated by bullets and full stops.
 
+## Advisor Outreach Draft (SCA-18)
+
+- **Input:** `Student` (Contact). **Used by:** the advisor agent's Draft Outreach topic (SCA-23).
+- **Grounding:** the same `PF – Student Risk Grounding` flow, as background only.
+- **Output:** a "Subject:" line and an 80–140 word body from the advisor (`{!$User.FirstName}`) to the
+  student by first name. No score, "risk", "flag", numbers or grades. Missed classes mentioned gently
+  once; a general check-in when the reason is "Not available". The template only drafts; nothing
+  sends it (the advisor sends it).
+
+Tested 2026-11-19 on Jordan (mentions being less active in class, gently), Skyler and a contact with
+no data (general check-in). All three: no brackets or placeholders, no score/risk/flag words, no
+digits, no other recipients, 93–100 words.
+
+**Tone review** by a named reviewer is still open (answer 12).
+
 ### Not yet confirmed
 
 Trust Layer data masking: configured on the Einstein Trust Layer Setup screen, with no metadata
