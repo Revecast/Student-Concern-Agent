@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomNotificationType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customNotifTypeName>Student Risk Alert</customNotifTypeName>
+    <description>Tells the assigned advisor (or the Advising Queue when there is none) that a first-year student crossed the risk limit. Text carries no student data. SCA-14.</description>
+    <desktop>true</desktop>
+    <masterLabel>Student Risk Alert</masterLabel>
+    <mobile>true</mobile>
+</CustomNotificationType>

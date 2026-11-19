@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata"><fullName>Missed_Class_Points__c</fullName><label>Missed Class Points</label><description>Points added for each class marked Absent inside the missed-class window. Default 2.</description><inlineHelpText>Points added for each class marked Absent inside the missed-class window.</inlineHelpText><fieldManageability>DeveloperControlled</fieldManageability><type>Number</type><precision>4</precision><scale>0</scale><required>true</required><unique>false</unique></CustomField>
