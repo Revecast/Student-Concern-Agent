@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>ENG 101 Peer review of two classmates' d</label>
+    <protected>false</protected>
+    <values><field>Assignment_Title__c</field><value xsi:type="xsd:string">Peer review of two classmates' drafts</value></values>
+    <values><field>Assignment_Type__c</field><value xsi:type="xsd:string">discussion</value></values>
+    <values><field>Course_Code__c</field><value xsi:type="xsd:string">ENG 101</value></values>
+    <values><field>Due_In_Days__c</field><value xsi:type="xsd:double">8</value></values>
+    <values><field>Points__c</field><value xsi:type="xsd:double">15</value></values>
+</CustomMetadata>
