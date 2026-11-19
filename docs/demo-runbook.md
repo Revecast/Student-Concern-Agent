@@ -34,6 +34,17 @@ Expected scores after the next scoring run:
 | Taylor Brooks | 1 absence | 2 |
 | 14 others | — | 0 |
 
+**About the day counts.** "Days without login" is counted from the day you run the loader: each
+student's last login is set to midday that many days earlier. The nightly scorer usually runs the
+following morning, so by then every count is **one day higher** (Jordan shows 6 days, Avery 12,
+Morgan 7). The scores do not change: the login points only step at 5 and 10 days, and the
+absences are the most recent class meetings. Scores stay as in the table for about three days
+after loading; reload before a demo to reset them.
+
+**Finding the demo students.** Use the **Demo Students** list view on Contacts. It shows only the
+21 demo students and leaves out the 220 synthetic bulk-test students (`DEMO - Bulk Test Students
+(safe to delete)`), which are Withdrawn and never scored.
+
 ## 2. Score the students (SCA-9)
 
 The scorer runs every night at 02:00 Pacific (05:00 Eastern). Reset the data before then and the
