@@ -57,3 +57,28 @@ digits, no other recipients, 93–100 words.
 
 Trust Layer data masking: configured on the Einstein Trust Layer Setup screen, with no metadata
 setting, and the audit trail needs Data Cloud (not provisioned). Checked in SCA-43.
+
+## Student Check-in Message (SCA-19)
+
+- **Inputs:** `Student` (Contact) and `Meeting_Times` (text, three lines, one time each). The times
+  will come from the open-time logic (SCA-27); until then the caller passes them in.
+- **No grounding.** The template reads only the student's first name, so no grades, scores, attendance
+  or other record detail can reach the model (FERPA). Checked in preview mode: the resolved prompt holds
+  the first name and the times, nothing else from the record.
+- **Output:** greeting, one sentence, the three times as `1) … 2) … 3) …` exactly as given, "Reply 1, 2
+  or 3, or just reply to talk.", sign-off "- Student Success". Under 45 words. No blame or worry words
+  (missed, absent, behind, concerned, risk, score, grade…), no exclamation marks, no brackets.
+- **SMS length:** checked at 320 characters or fewer (two standard text segments). The model can't
+  count characters, so the template asks for a word limit instead. Keep the times short (for example
+  "Tue Nov 24, 10:00 AM ET") when SCA-27 formats them.
+
+### Tested 2026-11-19 (live generations)
+
+| Student | Score | Characters | Times exact and in order | Banned words / brackets |
+|---|---|---|---|---|
+| Jordan Rivera | 7 | 278 | yes | none |
+| Skyler Adeyemi | 0 | 257 | yes | none |
+| Rose Gonzalez (no student data) | none | 255 | yes | none |
+
+The first version asked for "at most 300 characters" and produced 326–338; switching to a word limit
+fixed it. **Tone review** by a named reviewer is still open (answer 12).
