@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+  <label>SYS – Student Concern Automation</label>
+  <description>Lets the Student Concern Agent's running user and admins run its Apex actions: StudentAbsenceCounter (missed-class counts for the nightly risk scorer, SCA-9 / ADR-012). Grants no data access by itself. SCA-5 / SCA-9.</description>
+  <hasActivationRequired>false</hasActivationRequired>
+  <classAccesses><apexClass>StudentAbsenceCounter</apexClass><enabled>true</enabled></classAccesses>
+</PermissionSet>
