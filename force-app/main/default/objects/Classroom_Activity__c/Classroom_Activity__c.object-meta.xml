@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+  <description>Simulated classroom-system (LMS) activity: one record per student and course with last login and current and two-weeks-ago grades. Stand-in for a real Canvas or Moodle feed (ADR-004); a real integration would upsert the same fields by External Key, so the nightly scorer does not change. Child of the student Contact, so it follows the student's sharing. FERPA data. SCA-7.</description>
+  <label>Classroom Activity</label>
+  <pluralLabel>Classroom Activities</pluralLabel>
+  <nameField><displayFormat>ACT-{000000}</displayFormat><label>Activity Number</label><type>AutoNumber</type></nameField>
+  <deploymentStatus>Deployed</deploymentStatus>
+  <sharingModel>ControlledByParent</sharingModel>
+  <externalSharingModel>ControlledByParent</externalSharingModel>
+  <enableActivities>false</enableActivities>
+  <enableBulkApi>true</enableBulkApi>
+  <enableFeeds>false</enableFeeds>
+  <enableHistory>false</enableHistory>
+  <enableReports>true</enableReports>
+  <enableSearch>false</enableSearch>
+  <enableSharing>true</enableSharing>
+  <enableStreamingApi>true</enableStreamingApi>
+  <allowInChatterGroups>false</allowInChatterGroups>
+  <visibility>Public</visibility>
+</CustomObject>

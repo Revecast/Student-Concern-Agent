@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata"><fullName>Alert_Limit__c</fullName><label>Alert Limit</label><description>Score at or above which the advisor is alerted and the student gets a check-in. Default 6.</description><inlineHelpText>Score at or above which the advisor is alerted and the student gets a check-in.</inlineHelpText><fieldManageability>DeveloperControlled</fieldManageability><type>Number</type><precision>4</precision><scale>0</scale><required>true</required><unique>false</unique></CustomField>
