@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata"><fullName>Student_Replied__c</fullName><label>Student Replied</label><description>Ticked when the student replied to this outreach (portal chat or email).</description><inlineHelpText>Ticked when the student replied.</inlineHelpText><businessStatus>Active</businessStatus><type>Checkbox</type><defaultValue>false</defaultValue></CustomField>

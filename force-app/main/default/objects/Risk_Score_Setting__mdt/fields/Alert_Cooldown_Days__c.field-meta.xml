@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata"><fullName>Alert_Cooldown_Days__c</fullName><label>Alert Cooldown Days</label><description>Minimum days between two alerts for the same student. Default 7.</description><inlineHelpText>Minimum days between two alerts for the same student.</inlineHelpText><fieldManageability>DeveloperControlled</fieldManageability><type>Number</type><precision>4</precision><scale>0</scale><required>true</required><unique>false</unique></CustomField>
