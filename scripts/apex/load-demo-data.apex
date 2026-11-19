@@ -5,7 +5,9 @@ Purpose:       Loads the Student Concern demo cohort (SCA-8): Jordan Rivera
                plus 20 other fictional first-year students, with term
                enrollment (Freshman, Active), three course sections,
                attendance for the last 14 days, simulated classroom activity
-               and an Advisee Record whose case team is the assigned advisor.
+               and an Advisee Record whose case team is the assigned advisor;
+               the advisor is also on each student's account team (Read),
+               which is how advisors see their own students (SCA-5).
 
                Idempotent: every record is matched on a stable key (email,
                name or external key) and updated in place, and every date is
@@ -24,6 +26,7 @@ History
 -------
 VERSION  AUTHOR                 DATE         DETAIL    DESCRIPTION
 1.0      Revecast Orchestrate   19/11/2026   Created   SCA-8
+1.1      Revecast Orchestrate   19/11/2026   Updated   SCA-5: advisor account team
 *****************************************************************/
 
 // ---- Settings -------------------------------------------------------------
@@ -320,6 +323,31 @@ for (Case advisee : advisees) {
 }
 insert newMembers;
 
+// ---- Account team: the advisor can read their own students (SCA-5, ADR-013) --
+// Student records are Private; the assigned advisor is on each student's
+// administrative account team with Read (Contact is Controlled by Parent).
+// Keep it in step with the case team above: changing an advisor means
+// updating both (Flow cannot trigger on CaseTeamMember).
+Set<Id> studentAccountIds = new Set<Id>();
+for (Contact student : students) {
+    studentAccountIds.add(student.AccountId);
+}
+Set<Id> haveAccountTeam = new Set<Id>();
+for (AccountTeamMember member : [SELECT AccountId FROM AccountTeamMember
+        WHERE AccountId IN :studentAccountIds AND UserId = :advisor.Id]) {
+    haveAccountTeam.add(member.AccountId);
+}
+List<AccountTeamMember> newAccountMembers = new List<AccountTeamMember>();
+for (Id accountId : studentAccountIds) {
+    if (!haveAccountTeam.contains(accountId)) {
+        newAccountMembers.add(new AccountTeamMember(AccountId = accountId, UserId = advisor.Id,
+            TeamMemberRole = 'Advisor', AccountAccessLevel = 'Read',
+            CaseAccessLevel = 'None', OpportunityAccessLevel = 'None'));
+    }
+}
+insert newAccountMembers;
+
 System.debug('SCA-8 demo load complete: ' + students.size() + ' students, ' + entries.size()
     + ' attendance entries, ' + activity.size() + ' classroom activity rows, '
-    + newMembers.size() + ' new advisor assignments.');
+    + newMembers.size() + ' new advisor assignments, '
+    + newAccountMembers.size() + ' new account team members.');

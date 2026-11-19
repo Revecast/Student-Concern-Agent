@@ -49,3 +49,21 @@ scripts/schedule-scoring.sh nightly    # put the 02:00 schedule back
 
 How the points and the reason work: see [`risk-score.md`](risk-score.md). To test at volume,
 see the bulk-test scripts described there.
+
+## 3. Who can see which student (SCA-5)
+
+Student records are **Private** (ADR-013): Account, Case and Opportunity are Private and Contact is
+Controlled by Parent. An advisor sees a student because they are on:
+
+1. the student's **account team** (role Advisor, Account access Read), which shows the Contact,
+   risk fields and classroom activity; and
+2. the student's **Advisee Record case team** (role Advisor), which shows the Advisee case. The
+   flow `RT – Student Outreach – Share With Advisor` uses it to share every new outreach row with
+   that advisor (Read).
+
+The agent's running user (group Student Concern Agent User) has View All on student records.
+
+**Changing a student's advisor:** update both teams. On the student's administrative account,
+replace the Account Team member. On the Advisee Record case, replace the Case Team member. Flow
+can't react to case team changes, so this isn't automatic. Outreach rows created earlier stay
+shared with the previous advisor. The demo load sets both teams for the presenter.
