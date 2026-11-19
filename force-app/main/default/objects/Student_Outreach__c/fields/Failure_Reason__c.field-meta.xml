@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata"><fullName>Failure_Reason__c</fullName><label>Failure Reason</label><description>Why a send failed or was skipped (for example no school email on file). No student data.</description><inlineHelpText>Why the send failed or was skipped.</inlineHelpText><businessStatus>Active</businessStatus><type>Text</type><length>255</length><required>false</required><unique>false</unique></CustomField>
