@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
+  <brand><headerColor>#0B5CAB</headerColor><shouldOverrideOrgTheme>false</shouldOverrideOrgTheme></brand>
+  <description>Student Concern Agent workspace for advisors: students (Contacts) with their risk score, the outreach log and simulated classroom activity. SCA-5.</description>
+  <formFactors>Large</formFactors>
+  <label>Student Concern</label>
+  <navType>Standard</navType>
+  <tabs>standard-Contact</tabs>
+  <tabs>Student_Outreach__c</tabs>
+  <tabs>Classroom_Activity__c</tabs>
+  <tabs>standard-report</tabs>
+  <uiType>Lightning</uiType>
+</CustomApplication>

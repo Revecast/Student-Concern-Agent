@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata"><fullName>Meeting_Booked__c</fullName><label>Meeting Booked</label><description>Ticked when the student booked an advising meeting from this outreach.</description><inlineHelpText>Ticked when a meeting was booked.</inlineHelpText><businessStatus>Active</businessStatus><type>Checkbox</type><defaultValue>false</defaultValue></CustomField>

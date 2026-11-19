@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata"><fullName>FailureNeedsReason</fullName><active>true</active><description>A failed or skipped send must record why (SCA-37).</description><errorConditionFormula>AND(OR(ISPICKVAL(Status__c, "Failed"), ISPICKVAL(Status__c, "Skipped")), ISBLANK(Failure_Reason__c))</errorConditionFormula><errorDisplayField>Failure_Reason__c</errorDisplayField><errorMessage>Add a failure reason when the status is Failed or Skipped.</errorMessage></ValidationRule>
