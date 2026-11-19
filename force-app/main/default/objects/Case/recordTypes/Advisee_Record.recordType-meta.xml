@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+  <fullName>Advisee_Record</fullName>
+  <active>true</active>
+  <businessProcess>Advising</businessProcess>
+  <description>One per student (ContactId = student). Case team members with the Advisor role are the student's assigned advisors (success team). The agent resolves the assigned advisor only from here (ADR-001). SCA-8.</description>
+  <label>Advisee Record</label>
+</RecordType>
