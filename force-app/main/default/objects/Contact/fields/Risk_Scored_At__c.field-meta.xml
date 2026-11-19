@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata"><fullName>Risk_Scored_At__c</fullName><label>Risk Scored At</label><description>When the risk score was last calculated by the nightly flow. Origin: SCA-4 / SCA-9.</description><inlineHelpText>When the risk score was last calculated.</inlineHelpText><businessStatus>Active</businessStatus><securityClassification>Confidential</securityClassification><complianceGroup>FERPA</complianceGroup><type>DateTime</type><required>false</required></CustomField>
