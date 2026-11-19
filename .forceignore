@@ -1,0 +1,13 @@
+# Salesforce DX ignore file.
+# Generated agent artefacts. `sf agent publish authoring-bundle` writes these
+# into the project. Salesforce will not redeploy an active bot version, so a
+# full force-app deploy fails if they are included. The source of truth is the
+# authoring bundle in aiAuthoringBundles/; publish it with `sf agent publish`.
+**/bots/**
+**/genAiPlannerBundles/**
+
+# Standard ignores
+**/jsconfig.json
+**/.eslintrc.json
+**/__tests__/**
+package.xml
