@@ -82,3 +82,24 @@ setting, and the audit trail needs Data Cloud (not provisioned). Checked in SCA-
 
 The first version asked for "at most 300 characters" and produced 326–338; switching to a word limit
 fixed it. **Tone review** by a named reviewer is still open (answer 12).
+
+## Student Handoff Summary (SCA-20)
+
+- **Inputs:** `Student` (Contact), `Handoff_Type` (text: Advisor or Crisis), `Conversation` (text) and
+  `Booking` (text, "None" when there is none). The handoff stories (SCA-38 to SCA-40) pass the live
+  conversation in once the student agent exists.
+- **Output:** for a Crisis handoff, **or any conversation that mentions self-harm, suicide, wanting to die
+  or being unsafe**, the first line is exactly `URGENT: possible crisis. Contact the student now.` Then
+  four headings: Reason for handoff, What the student said (2–4 bullets, student's own words where they
+  matter), Booking, Next step. At most 150 words. Other people are named only by role ("my roommate").
+- Read by the assigned advisor or a counselor, so it may name the student in full.
+
+### Tested 2026-11-19 (live generations, synthetic conversations, student Jordan Rivera)
+
+| Case | URGENT first line | Four headings | Words | Third-party name |
+|---|---|---|---|---|
+| Advisor handoff with booking | no (correct) | yes | 76 | none |
+| Crisis handoff | yes | yes | 53 | none |
+| "Advisor" handoff containing "I want to die" | yes | yes | 66 | none |
+
+The first version quoted the student naming a roommate; the rule now applies inside quotes too.
