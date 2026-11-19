@@ -27,6 +27,7 @@ History
 VERSION  AUTHOR                 DATE         DETAIL    DESCRIPTION
 1.0      Revecast Orchestrate   19/11/2026   Created   SCA-8
 1.1      Revecast Orchestrate   19/11/2026   Updated   SCA-5: advisor account team
+1.2      Revecast Orchestrate   19/11/2026   Updated   SCA-8: last login anchored to midday
 *****************************************************************/
 
 // ---- Settings -------------------------------------------------------------
@@ -36,7 +37,6 @@ String ADVISOR_USERNAME = 'ernie.maldonado@revecast.io.edupde';
 String KEY_PREFIX = 'DEMO';                       // prefix for every demo key
 String EMAIL_DOMAIN = 'student.jaxstate.example'; // reserved domain: never delivers
 Date TODAY_DATE = Date.today();
-Datetime NOW_TIME = Datetime.now();
 
 // ---- Cohort definition ----------------------------------------------------
 // Each row: key, first, last, absences in the last 14 days,
@@ -286,7 +286,9 @@ for (Integer i = 0; i < cohort.size(); i++) {
             Course_Offering__c = sectionByCode.get(courseCodes[c]).Id,
             Course_Name__c = courseNames[c],
             // Same last login across courses: the student stopped logging in everywhere.
-            Last_Login__c = NOW_TIME.addDays(-daysSinceLogin).addHours(-1),
+            // Anchored to midday on the target day (running user's time zone) so the
+            // day count does not depend on what time of day the loader runs.
+            Last_Login__c = Datetime.newInstance(TODAY_DATE.addDays(-daysSinceLogin), Time.newInstance(12, 0, 0, 0)),
             Current_Grade__c = grades[c * 2],
             Grade_Two_Weeks_Ago__c = grades[c * 2 + 1],
             Source_System__c = 'Simulated'
