@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata"><fullName>Missed_Class_Window_Days__c</fullName><label>Missed Class Window Days</label><description>How many days back absences are counted. Default 14.</description><inlineHelpText>How many days back absences are counted.</inlineHelpText><fieldManageability>DeveloperControlled</fieldManageability><type>Number</type><precision>4</precision><scale>0</scale><required>true</required><unique>false</unique></CustomField>

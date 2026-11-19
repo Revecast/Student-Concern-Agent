@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata"><fullName>Last_Login__c</fullName><label>Last Login</label><description>Last time the student logged into this course in the classroom system. Drives the no-login points in the risk score.</description><inlineHelpText>Last classroom-system login for this course.</inlineHelpText><businessStatus>Active</businessStatus><securityClassification>Confidential</securityClassification><complianceGroup>FERPA</complianceGroup><type>DateTime</type><required>false</required></CustomField>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+  <label>DATA – Student Alerts – Update</label>
+  <description>Read and edit Record Alerts so advisors can see, snooze and close the risk alerts they own. No create or delete; alerts are created by the SCA-14 automation. Includes Case read because Salesforce requires it for Record Alert access. SCA-14.</description>
+  <hasActivationRequired>false</hasActivationRequired>
+  <objectPermissions><allowCreate>false</allowCreate><allowDelete>false</allowDelete><allowEdit>true</allowEdit><allowRead>true</allowRead><modifyAllRecords>false</modifyAllRecords><object>RecordAlert</object><viewAllRecords>false</viewAllRecords></objectPermissions>
+  <objectPermissions><allowCreate>false</allowCreate><allowDelete>false</allowDelete><allowEdit>false</allowEdit><allowRead>true</allowRead><modifyAllRecords>false</modifyAllRecords><object>Case</object><viewAllRecords>false</viewAllRecords></objectPermissions>
+</PermissionSet>

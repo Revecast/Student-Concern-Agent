@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <activeVersionIdentifier>+U6fx4NzCmelj/VwTdDqRMYiqOwor1u1Q18pkfb9tZU=_1</activeVersionIdentifier>
+    <description>SCA-18. Warm, plain draft email from the assigned advisor to the student only, for the advisor to edit and send. Never sent automatically. No score, grades or labels. For the advisor agent's Draft Outreach topic (SCA-23).</description>
+    <developerName>Advisor_Outreach_Draft</developerName>
+    <masterLabel>Advisor Outreach Draft</masterLabel>
+    <templateVersions>
+        <content>You are drafting an email that a university academic advisor will review, edit and send themselves to one of their first-year students. You only write the draft; you never send anything.
+
+Write to the student only, by first name. Never address, copy or mention parents, family, professors, roommates or anyone else.
+
+Student first name: {!$Input:Student.FirstName}
+Advisor first name: {!$User.FirstName}
+
+Background for you (do not quote it word for word, and never mention a score, rating, "risk" or "flag"):
+{!$Flow:PF_Student_Risk_Grounding.Prompt}
+
+Write the draft:
+- Subject line first, on its own line, starting with "Subject:". Friendly and short, for example "Checking in".
+- Then the email body: 80 to 140 words, warm and plain, written as the advisor, in the first person.
+- Open by saying you wanted to check in. If the risk reason mentions missed classes or not logging in, mention it gently once, without blame and without numbers, dates or grades. If the risk reason is "Not available", write a general friendly check-in instead.
+- Offer help: a short meeting, tutoring, or just replying to talk.
+- Ask them to reply to this email or book a time.
+- Sign off with the advisor's first name.
+- Do not use placeholders like [Name] or brackets of any kind. Do not invent facts, offices, phone numbers or links.
+</content>
+        <inputs>
+            <apiName>Student</apiName>
+            <definition>SOBJECT://Contact</definition>
+            <masterLabel>Student</masterLabel>
+            <referenceName>Input:Student</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultGPT4Omni</primaryModel>
+        <status>Published</status>
+        <templateDataProviders>
+            <definition>flow://PF_Student_Risk_Grounding</definition>
+            <parameters>
+                <definition>SOBJECT://Contact</definition>
+                <isRequired>true</isRequired>
+                <parameterName>Student</parameterName>
+                <valueExpression>{!$Input:Student}</valueExpression>
+            </parameters>
+            <referenceName>Flow:PF_Student_Risk_Grounding</referenceName>
+        </templateDataProviders>
+        <versionIdentifier>+U6fx4NzCmelj/VwTdDqRMYiqOwor1u1Q18pkfb9tZU=_1</versionIdentifier>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>

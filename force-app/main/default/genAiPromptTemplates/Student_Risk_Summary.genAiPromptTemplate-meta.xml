@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <activeVersionIdentifier>EMtrvj35oei7s4GOGBSJz/6azw3hc0cVYwvcEmhZJFs=_1</activeVersionIdentifier>
+    <description>SCA-17. Factual summary of a student's risk, attendance, grades and recent outreach for their assigned advisor. Uses only the student's record; says "Not available" instead of guessing. For the advisor agent (SCA-22).</description>
+    <developerName>Student_Risk_Summary</developerName>
+    <masterLabel>Student Risk Summary</masterLabel>
+    <templateVersions>
+        <content>You are helping a university academic advisor get ready to contact one of their first-year students. Write a short, factual summary for the advisor only.
+
+Use only the student data below. Do not guess, estimate or add anything that is not in it. If a piece of information is missing or empty, write "Not available" for it instead of guessing. Do not give advice about the student's health or personal life. Do not include the student's email, phone or ID.
+
+Student: {!$Input:Student.FirstName} {!$Input:Student.LastName}
+{!$Flow:PF_Student_Risk_Grounding.Prompt}
+
+Write the summary in plain language, under 150 words, with these four headings:
+1. Risk: the score and the risk reason in one sentence. Say the student was flagged only if Flagged is yes. If the risk reason is "Not available", say so.
+2. Attendance: the missed classes stated in the risk reason, or "Not available" if the reason does not mention classes.
+3. Grades: each course with its current grade and the change from two weeks ago, or "Not available".
+4. Recent outreach: what was sent and whether the student replied, or "None yet".
+</content>
+        <inputs>
+            <apiName>Student</apiName>
+            <definition>SOBJECT://Contact</definition>
+            <masterLabel>Student</masterLabel>
+            <referenceName>Input:Student</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultGPT4Omni</primaryModel>
+        <status>Published</status>
+        <templateDataProviders>
+            <definition>flow://PF_Student_Risk_Grounding</definition>
+            <parameters>
+                <definition>SOBJECT://Contact</definition>
+                <isRequired>true</isRequired>
+                <parameterName>Student</parameterName>
+                <valueExpression>{!$Input:Student}</valueExpression>
+            </parameters>
+            <referenceName>Flow:PF_Student_Risk_Grounding</referenceName>
+        </templateDataProviders>
+        <versionIdentifier>EMtrvj35oei7s4GOGBSJz/6azw3hc0cVYwvcEmhZJFs=_1</versionIdentifier>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>
