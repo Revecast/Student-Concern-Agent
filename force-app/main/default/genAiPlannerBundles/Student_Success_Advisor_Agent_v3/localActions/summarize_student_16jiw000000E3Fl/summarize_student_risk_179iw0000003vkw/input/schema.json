@@ -1,0 +1,17 @@
+{
+  "required" : [ "Input:Student" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "Input:Student" : {
+      "title" : "Input:Student",
+      "description" : "The student (Contact) to summarize.",
+      "lightning:type" : "lightning__recordInfoType",
+      "lightning:sObjectInfo" : {
+        "apiName" : "Contact"
+      },
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

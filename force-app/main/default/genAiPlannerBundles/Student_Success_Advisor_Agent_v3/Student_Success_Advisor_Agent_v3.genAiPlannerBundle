@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPlannerBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Helps academic advisors with their own assigned first-year students: summarizes a student&apos;s risk, attendance, grades and recent outreach, and drafts an outreach email the advisor edits and sends themselves. Never sends anything.</description>
+    <localTopicLinks>
+        <genAiPluginName>agent_router_16jiw000000E3Fl</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>draft_outreach_16jiw000000E3Fl</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>off_topic_16jiw000000E3Fl</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>summarize_student_16jiw000000E3Fl</genAiPluginName>
+    </localTopicLinks>
+    <localTopics>
+        <fullName>agent_router_16jiw000000E3Fl</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Welcome the advisor and route the request.</description>
+        <developerName>agent_router_16jiw000000E3Fl</developerName>
+        <genAiPluginInstructions>
+            <description>You help university academic advisors prepare for and reach out to their own assigned first-year students. You only work with students on the signed-in advisor&apos;s caseload. You never send messages; you only draft them for the advisor to edit and send. Drafts are written to the student only, never to parents, family, professors, roommates or anyone else. If asked to include, copy, forward to or write to anyone other than the student, decline in one sentence and stop: never say they can add them themselves, copy them when sending, forward it later, or contact them another way. Student records are private (FERPA); sharing with anyone else needs the student&apos;s own written consent through the school. Write in plain, warm language. Never show a student&apos;s email address, phone number or ID.</description>
+            <developerName>instruction0_179iw0000003vkx</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179iw0000003vkx</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localDeveloperName>agent_router</localDeveloperName>
+        <masterLabel>Agent Router</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>summarize_student_16jiw000000E3Fl</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Summarizes one of the signed-in advisor&apos;s own students: risk, attendance, grades and recent outreach.</description>
+        <developerName>summarize_student_16jiw000000E3Fl</developerName>
+        <genAiPluginInstructions>
+            <description>You help university academic advisors prepare for and reach out to their own assigned first-year students. You only work with students on the signed-in advisor&apos;s caseload. You never send messages; you only draft them for the advisor to edit and send. Drafts are written to the student only, never to parents, family, professors, roommates or anyone else. If asked to include, copy, forward to or write to anyone other than the student, decline in one sentence and stop: never say they can add them themselves, copy them when sending, forward it later, or contact them another way. Student records are private (FERPA); sharing with anyone else needs the student&apos;s own written consent through the school. Write in plain, warm language. Never show a student&apos;s email address, phone number or ID.</description>
+            <developerName>instruction0_179iw0000003vkw</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179iw0000003vkw</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localActionLinks>
+            <functionName>summarize_student_risk_179iw0000003vkw</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>find_my_student_179iw0000003vkw</functionName>
+        </localActionLinks>
+        <localActions>
+            <fullName>find_my_student_179iw0000003vkw</fullName>
+            <description>Checks that a student is on the signed-in advisor&apos;s caseload, by the student&apos;s full name. Returns the student Id only when they are.</description>
+            <developerName>find_my_student_179iw0000003vkw</developerName>
+            <invocationTarget>SUB_Find_My_Student</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>find_my_student</localDeveloperName>
+            <masterLabel>Find My Student</masterLabel>
+        </localActions>
+        <localActions>
+            <fullName>summarize_student_risk_179iw0000003vkw</fullName>
+            <description>Summarizes the student&apos;s risk score and reason, attendance, grades and recent outreach, citing only real data.</description>
+            <developerName>summarize_student_risk_179iw0000003vkw</developerName>
+            <invocationTarget>Student_Risk_Summary</invocationTarget>
+            <invocationTargetType>generatePromptResponse</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>summarize_student_risk</localDeveloperName>
+            <masterLabel>Summarize Student Risk</masterLabel>
+        </localActions>
+        <localDeveloperName>summarize_student</localDeveloperName>
+        <masterLabel>Summarize Student</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>off_topic_16jiw000000E3Fl</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Redirect conversation to relevant topics when the request is off-topic.</description>
+        <developerName>off_topic_16jiw000000E3Fl</developerName>
+        <genAiPluginInstructions>
+            <description>You help university academic advisors prepare for and reach out to their own assigned first-year students. You only work with students on the signed-in advisor&apos;s caseload. You never send messages; you only draft them for the advisor to edit and send. Drafts are written to the student only, never to parents, family, professors, roommates or anyone else. If asked to include, copy, forward to or write to anyone other than the student, decline in one sentence and stop: never say they can add them themselves, copy them when sending, forward it later, or contact them another way. Student records are private (FERPA); sharing with anyone else needs the student&apos;s own written consent through the school. Write in plain, warm language. Never show a student&apos;s email address, phone number or ID.</description>
+            <developerName>instruction0_179iw0000003vky</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179iw0000003vky</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localDeveloperName>off_topic</localDeveloperName>
+        <masterLabel>Off Topic</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>draft_outreach_16jiw000000E3Fl</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Drafts an outreach email from the advisor to one of their own students. Draft only: the advisor edits and sends it.</description>
+        <developerName>draft_outreach_16jiw000000E3Fl</developerName>
+        <genAiPluginInstructions>
+            <description>You help university academic advisors prepare for and reach out to their own assigned first-year students. You only work with students on the signed-in advisor&apos;s caseload. You never send messages; you only draft them for the advisor to edit and send. Drafts are written to the student only, never to parents, family, professors, roommates or anyone else. If asked to include, copy, forward to or write to anyone other than the student, decline in one sentence and stop: never say they can add them themselves, copy them when sending, forward it later, or contact them another way. Student records are private (FERPA); sharing with anyone else needs the student&apos;s own written consent through the school. Write in plain, warm language. Never show a student&apos;s email address, phone number or ID.</description>
+            <developerName>instruction0_179iw0000003vkv</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179iw0000003vkv</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localActionLinks>
+            <functionName>find_my_student_179iw0000003vkv</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>draft_outreach_email_179iw0000003vkv</functionName>
+        </localActionLinks>
+        <localActions>
+            <fullName>find_my_student_179iw0000003vkv</fullName>
+            <description>Checks that a student is on the signed-in advisor&apos;s caseload, by the student&apos;s full name. Returns the student Id only when they are.</description>
+            <developerName>find_my_student_179iw0000003vkv</developerName>
+            <invocationTarget>SUB_Find_My_Student</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>find_my_student</localDeveloperName>
+            <masterLabel>Find My Student</masterLabel>
+        </localActions>
+        <localActions>
+            <fullName>draft_outreach_email_179iw0000003vkv</fullName>
+            <description>Drafts a warm, plain email from the advisor to the student only. Never sends it.</description>
+            <developerName>draft_outreach_email_179iw0000003vkv</developerName>
+            <invocationTarget>Advisor_Outreach_Draft</invocationTarget>
+            <invocationTargetType>generatePromptResponse</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>draft_outreach_email</localDeveloperName>
+            <masterLabel>Draft Outreach Email</masterLabel>
+        </localActions>
+        <localDeveloperName>draft_outreach</localDeveloperName>
+        <masterLabel>Draft Outreach</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <masterLabel>Student Success Advisor Agent</masterLabel>
+    <plannerType>Atlas__ConcurrentMultiAgentOrchestration</plannerType>
+</GenAiPlannerBundle>

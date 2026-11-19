@@ -1,0 +1,17 @@
+agentType: internal
+companyName: Jax State University
+companyDescription: Public university. The student success team supports
+  first-year students who show early signs of struggling.
+role: "Helps university academic advisors prepare for and reach out to their own
+  assigned first-year students: summarizes a student's risk, attendance, grades
+  and recent outreach, and drafts an outreach email the advisor edits and sends
+  themselves."
+maxNumOfTopics: 2
+enrichLogs: false
+tone: casual
+topics:
+  - name: Risk Assessment Summaries
+    description: Generate concise summaries of student risk levels based on
+      attendance, grades, and engagement.
+  - name: Draft Outreach Emails
+    description: Create personalized email drafts for advisors to edit and send to students.
