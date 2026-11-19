@@ -2,7 +2,7 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Student_Id__c</fullName>
     <label>Student Id</label>
-    <description>18-character Id of the student (WhoId) as text. Flow cannot read or filter AttendanceEntry.WhoId (deploy error: "The field WhoId for the object AttendanceEntry doesn't exist"), so the nightly scoring flow filters on this formula instead. Origin: SCA-9.</description>
+    <description>18-character Id of the student (WhoId) as text. Flow cannot read or filter AttendanceEntry.WhoId (deploy error: "The field WhoId for the object AttendanceEntry doesn't exist"), so this formula was added for the nightly scoring flow. Since ADR-012 the scorer counts absences in Apex (StudentAbsenceCounter) and no longer uses this field; candidate for removal. Origin: SCA-9.</description>
     <inlineHelpText>The student's record Id, for automation.</inlineHelpText>
     <businessStatus>Active</businessStatus>
     <securityClassification>Confidential</securityClassification>
