@@ -34,6 +34,18 @@ Expected scores after the next scoring run:
 | Taylor Brooks | 1 absence | 2 |
 | 14 others | — | 0 |
 
-## 2. Run the score now (SCA-9)
+## 2. Score the students (SCA-9)
 
-See SCA-9 section below once deployed.
+The scorer runs every night at 02:00 Pacific (05:00 Eastern). Reset the data before then and the
+scores are ready in the morning.
+
+To score straight away (a scheduled flow has no run-now button):
+
+```bash
+scripts/schedule-scoring.sh now 3      # runs in about 3 minutes
+# wait, then check Jordan's Risk Score (7) and Risk Reason on his Contact
+scripts/schedule-scoring.sh nightly    # put the 02:00 schedule back
+```
+
+How the points and the reason work: see [`risk-score.md`](risk-score.md). To test at volume,
+see the bulk-test scripts described there.
