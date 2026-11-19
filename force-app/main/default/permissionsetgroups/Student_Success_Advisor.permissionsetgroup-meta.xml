@@ -3,6 +3,6 @@
   <description>Job function: academic advisor. Reads risk fields, the outreach log and classroom activity for their own students, and uses the Student Concern app. SCA-5.</description>
   <hasActivationRequired>false</hasActivationRequired>
   <label>Student Success Advisor</label>
-  <permissionSets>DATA_Student_Success_Read_Only</permissionSets><permissionSets>APP_Student_Concern</permissionSets>
+  <permissionSets>DATA_Student_Success_Read_Only</permissionSets><permissionSets>APP_Student_Concern</permissionSets><permissionSets>DATA_Student_Alerts_Update</permissionSets>
   <status>Updated</status>
 </PermissionSetGroup>

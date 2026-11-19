@@ -67,3 +67,26 @@ The agent's running user (group Student Concern Agent User) has View All on stud
 replace the Account Team member. On the Advisee Record case, replace the Case Team member. Flow
 can't react to case team changes, so this isn't automatic. Outreach rows created earlier stay
 shared with the previous advisor. The demo load sets both teams for the presenter.
+
+## 4. What the advisor gets when a student is flagged (SCA-13, SCA-14)
+
+When the nightly score rises from below 6 to 6 or more, and the student has not been alerted in
+the last 7 days, `RT – Contact – Risk Crossing` calls `SUB – Alert Assigned Advisor`. It finds
+the Advisor on the student's Advisee Record case team and gives that person:
+
+1. a **Record Alert** on the student (Severity Warning, active for 7 days);
+2. a **Task** on the Advisee case, due in two days, with the score and the plain-language reason;
+3. a **Student Risk Alert** in-app notification (desktop and mobile). The text says only
+   "Student check-in needed"; it names no student, because a phone can show it on a lock screen.
+
+Each step is written to the outreach log. **No assigned advisor:** everything goes to the
+**Advising Queue** instead and an extra log row records the Advising Queue exception. Nobody else
+is ever alerted (ADR-001). The student's check-in is sent at the same time (ADR-014, SCA-15).
+
+**Advising Queue members:** add people with
+`sf apex run -f scripts/apex/add-advising-queue-member.apex -o <org>` (edit the username at the
+top). Run it once after the demo load; by default it adds the presenter.
+
+**Seeing it in the demo:** the Task shows in the student's Activity timeline and on the advisor's
+home page; the notification appears under the bell. Advisors hold `DATA – Student Alerts – Update`
+(through their permission set group) to read, snooze and close their alerts.
