@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Student_Id__c</fullName>
+    <label>Student Id</label>
+    <description>18-character Id of the student (WhoId) as text. Flow cannot read or filter AttendanceEntry.WhoId (deploy error: "The field WhoId for the object AttendanceEntry doesn't exist"), so the nightly scoring flow filters on this formula instead. Origin: SCA-9.</description>
+    <inlineHelpText>The student's record Id, for automation.</inlineHelpText>
+    <businessStatus>Active</businessStatus>
+    <securityClassification>Confidential</securityClassification>
+    <complianceGroup>FERPA</complianceGroup>
+    <type>Text</type>
+    <formula>CASESAFEID(WhoId)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <unique>false</unique>
+</CustomField>
