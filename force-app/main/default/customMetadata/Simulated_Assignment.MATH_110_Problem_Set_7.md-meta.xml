@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>MATH 110 Problem set 7: Quadratic equati</label>
+    <protected>false</protected>
+    <values><field>Assignment_Title__c</field><value xsi:type="xsd:string">Problem set 7: Quadratic equations</value></values>
+    <values><field>Assignment_Type__c</field><value xsi:type="xsd:string">problem set</value></values>
+    <values><field>Course_Code__c</field><value xsi:type="xsd:string">MATH 110</value></values>
+    <values><field>Due_In_Days__c</field><value xsi:type="xsd:double">2</value></values>
+    <values><field>Points__c</field><value xsi:type="xsd:double">25</value></values>
+</CustomMetadata>

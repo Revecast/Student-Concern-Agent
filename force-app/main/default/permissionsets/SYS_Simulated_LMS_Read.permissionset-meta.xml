@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+  <label>SYS – Simulated LMS Read</label>
+  <description>Read access to the Simulated Assignment custom metadata (sample upcoming assignments for the simulated classroom system, ADR-004) for the agent's running user and admins. SCA-31.</description>
+  <hasActivationRequired>false</hasActivationRequired>
+  <customMetadataTypeAccesses><enabled>true</enabled><name>Simulated_Assignment__mdt</name></customMetadataTypeAccesses>
+</PermissionSet>

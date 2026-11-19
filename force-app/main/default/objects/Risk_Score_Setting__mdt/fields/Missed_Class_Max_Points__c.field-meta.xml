@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata"><fullName>Missed_Class_Max_Points__c</fullName><label>Missed Class Max Points</label><description>Most points missed classes can add, however many are missed. Default 6.</description><inlineHelpText>Most points missed classes can add, however many are missed.</inlineHelpText><fieldManageability>DeveloperControlled</fieldManageability><type>Number</type><precision>4</precision><scale>0</scale><required>true</required><unique>false</unique></CustomField>

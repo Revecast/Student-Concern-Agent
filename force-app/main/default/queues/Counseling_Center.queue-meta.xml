@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Counseling_Center</fullName>
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Counseling Center</name>
+    <queueSobject><sobjectType>Task</sobjectType></queueSobject>
+</Queue>
