@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+  <description>Sample upcoming assignments for the simulated classroom system (ADR-004), matched to a student's courses by course code. Read by SUB – LMS – Simulated Assignments. A real LMS replaces that subflow, not this data. SCA-31.</description>
+  <label>Simulated Assignment</label>
+  <pluralLabel>Simulated Assignments</pluralLabel>
+  <visibility>Public</visibility>
+</CustomObject>

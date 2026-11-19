@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <activeVersionIdentifier>m1UgYMxJZy+G8s2bqR4Hmz0P9ezX2Z/abz9rKnUCOgw=_1</activeVersionIdentifier>
+    <description>SCA-20. Summary of a student conversation for the receiving advisor or counselor: reason, what was said, booking, next step. Crisis handoffs (or crisis words) start with an URGENT line. For SCA-38 to SCA-40.</description>
+    <developerName>Student_Handoff_Summary</developerName>
+    <masterLabel>Student Handoff Summary</masterLabel>
+    <templateVersions>
+        <content>You are summarizing a conversation between a university's student support agent and a student, for the person the conversation is being handed to (the student's assigned advisor, or a counselor). The goal is that the student never has to repeat themselves.
+
+Student: {!$Input:Student.FirstName} {!$Input:Student.LastName}
+Handoff type: {!$Input:Handoff_Type}
+Booking made in the conversation: {!$Input:Booking}
+
+Conversation:
+{!$Input:Conversation}
+
+Write the summary for the receiving person:
+- If the handoff type is Crisis, OR the conversation mentions self-harm, suicide, wanting to die, being unsafe or being in danger, the very first line must be exactly: "URGENT: possible crisis. Contact the student now." Otherwise do not use the word urgent.
+- Then these headings, each on its own line, in this order:
+  Reason for handoff: one sentence.
+  What the student said: two to four short bullets in plain words, using the student's own words where they matter. Never add anything the conversation does not say.
+  Booking: the booking as given, or "None" if there is none.
+  Next step: one sentence for the receiving person.
+- At most 150 words in total.
+- Write about the student only. Never include anyone else's name, phone number or email, even inside a quote: replace another person's name with their role, for example "my roommate" instead of a name. Do not invent facts, times or contact details.
+- No placeholders or brackets of any kind.
+</content>
+        <inputs>
+            <apiName>Student</apiName>
+            <definition>SOBJECT://Contact</definition>
+            <masterLabel>Student</masterLabel>
+            <referenceName>Input:Student</referenceName>
+            <required>true</required>
+        </inputs>
+        <inputs>
+            <apiName>Handoff_Type</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>Handoff Type</masterLabel>
+            <referenceName>Input:Handoff_Type</referenceName>
+            <required>true</required>
+        </inputs>
+        <inputs>
+            <apiName>Conversation</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>Conversation</masterLabel>
+            <referenceName>Input:Conversation</referenceName>
+            <required>true</required>
+        </inputs>
+        <inputs>
+            <apiName>Booking</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>Booking</masterLabel>
+            <referenceName>Input:Booking</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultGPT4Omni</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>m1UgYMxJZy+G8s2bqR4Hmz0P9ezX2Z/abz9rKnUCOgw=_1</versionIdentifier>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>
