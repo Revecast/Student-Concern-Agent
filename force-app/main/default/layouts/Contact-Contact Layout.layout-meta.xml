@@ -183,6 +183,8 @@
             </layoutItem>
         </relatedContentItems>
     </relatedContent>
+    <relatedLists><fields>NAME</fields><fields>Course_Name__c</fields><fields>Last_Login__c</fields><fields>Current_Grade__c</fields><fields>Grade_Two_Weeks_Ago__c</fields><relatedList>Classroom_Activity__c.Student__c</relatedList></relatedLists>
+    <relatedLists><fields>NAME</fields><fields>Sent_At__c</fields><fields>Channel__c</fields><fields>Recipient_Type__c</fields><fields>Exception_Used__c</fields><fields>Status__c</fields><relatedList>Student_Outreach__c.Student__c</relatedList></relatedLists>
     <relatedLists>
         <fields>OPPORTUNITY.NAME</fields>
         <fields>OPPORTUNITY.STAGE_NAME</fields>

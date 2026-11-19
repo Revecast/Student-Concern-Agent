@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata"><fullName>Course_Name__c</fullName><label>Course Name</label><description>Course name as the classroom system reports it (for example BIO 101 – Introduction to Biology). Used in the plain-language risk reason.</description><inlineHelpText>Course name from the classroom system.</inlineHelpText><businessStatus>Active</businessStatus><type>Text</type><length>120</length><required>false</required><unique>false</unique></CustomField>
