@@ -27,3 +27,4 @@ npm-debug.log*
 *.pem
 .probe/
 __pycache__/
+*.pyc

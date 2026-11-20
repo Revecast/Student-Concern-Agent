@@ -103,3 +103,25 @@ that it is real.
 - **A full `force-app` deploy fails while generated `bots/` and `genAiPlannerBundles/` are in the project.** Salesforce won't redeploy an active bot version. They are now in `.forceignore` (PR #19); publish the agent with `sf agent publish authoring-bundle`. *Hit 2026-11-19.*
 - **The 7-day alert cooldown blocks re-testing the same student.** Avery Chen and "UAT No-Advisor Student" were alerted 2026-11-19. To re-test, clear Risk Last Alerted Date first, or use Morgan Silva. *Noted 2026-11-19.*
 - **The Orchestrate approval card calls removing CaseTeamMember/AccountTeamMember rows a "bulk delete of records".** It is only team memberships. Explain that up front. *Hit 2026-11-19; Ernie declined once because of the wording.*
+
+## Recorded 2026-11-20
+
+- **A Flow Access grant in a permission set does nothing unless the flow has `isAdditionalPermissionRequiredToRun = true`.** With it unset, users need the Run Flows permission, and non-admins without it get "Insufficient Privileges" (screen flow) or a silently failing agent action (the advisor agent said a student was "not on your caseload"). Setting it also applies the check to Apex/agent calls, so tests running as users without the grant start failing. *Hit 2026-11-19 in QA second pass (SCA-36); fixed in PR #24.* Set it on every flow a person or agent calls; leave it off record-triggered/scheduled automation subflows.
+
+## Recorded 2026-11-20 (QA fixes, PR #25)
+
+- **Changing the content of a Published prompt template version deploys as "Succeeded" but changes nothing.** The org keeps serving the old text. Add a new `<templateVersions>` block with `versionIdentifier` `<hash>_2` (keep `_1` as it is in the org) and set `activeVersionIdentifier` to `_2`. Check with the generations API using `isPreview: true` and look for the new text in `prompt`. *Hit 2026-11-20 on Student_Handoff_Summary and Student_Risk_Summary; a first retest looked like a pass but ran the old text.*
+- **~~The advisor agent chat drops "1." to "4." heading numbers~~ (corrected 2026-11-20).** QA saw the numbers in the real Agentforce panel as UAT Advisor One and in the admin preview, 6 of 6. The missing numbers were seen only in the command-line agent preview used by `scripts/agent-tests/converse.py`. Check display questions in the Agentforce panel, not the CLI preview. *Seen 2026-11-20, corrected the same day.*
+- **The "UAT test" email to ernie.maldonado@revecast.io (sent 2026-11-20 06:09 UTC) went to Gmail Spam.** Salesforce sends from `*.sfcustomeremail.com`; expect spam filing until email deliverability / DKIM is set up. *Found 2026-11-20.*
+- **Git commits in a new session folder fail with "Author identity unknown".** Set `git config user.name/user.email` in the repo before committing or using push_changes. *Hit 2026-11-20.*
+
+## Recorded 2026-11-20 (UAT round 2)
+
+- **Prompt Builder version numbers are not the metadata `versionIdentifier` suffix.** Handoff Summary `_2` showed as Version 3, `_3` as Version 4; Risk Summary `_2` as Version 4. Prompt Builder counts every version ever created. Read `VersionNumber` from `/einstein/prompt-templates/<DevName>`. *Found 2026-11-20 when QA reported "Version 3 and 4, not 2".*
+- **The "46 of 46 Apex tests" figure in the 2026-11-20 morning notes was wrong.** The org has 45 test methods. The latest stored test run (2026-11-20 14:10 UTC) and the afternoon validation 0Afiw000001SQTdCAO both show 45 of 45; no 46-test run exists. *Found 2026-11-20 when QA asked for the output.*
+- **QA could not find the Einstein Trust Layer page in Setup** (looked twice). The place to look is Setup → Quick Find "Einstein Trust Layer"; in this org it may not appear because Data Cloud is not provisioned (not confirmed). The proof that does not depend on the page: `sf project retrieve start --metadata Settings:EinsteinAI` shows `<enableAITrustPromptInjectionDetection>true` (and `enableTrustPIIMasking` false). *Hit 2026-11-20.*
+
+## Recorded 2026-11-20 (merge dry run)
+
+- **The project-memory sync commits `CONTEXT.md` and `context/` onto whatever branch the session is working on**, as "chore(context): sync project memory from Orchestrate". Each stacked PR branch got its own copy (#1 b9e8432, #23 1247bf5, #24 5ba0c9c, #25 f3be0d9/4d50bbe), so #23, #24 and #25 conflicted with each other and with #1 in CONTEXT.md, goals.md, gotchas.md and handoff.md; #23 and #25 also both added `__pycache__/` to `.gitignore`. *Found by QA's local merge dry run 2026-11-20.* Fixed by merging #1's memory commit into #23, #24 and #25 and giving all three the same memory files and `.gitignore`. Check: `../dryrun.sh`-style merge of every PR head into `main` in number order before asking anyone to merge.
+- **The "accepted false alarm" on an Agent safety line does not happen.** Handoff Summary Version 4 says to read agent lines too, but `Agent: If you ever feel unsafe or think about hurting yourself, call or text 988` plus normal student lines gave no URGENT line in 3 of 3 runs. *Found 2026-11-20 by qa_s5.py case agent-safety-line.* Don't rely on agent text to raise URGENT.

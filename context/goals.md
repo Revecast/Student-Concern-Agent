@@ -60,3 +60,9 @@ _Added automatically by Orchestrate when the turn finished._
 - Let the Playwright QA test alerts and own-students-only sharing as a non-admin advisor
 
 _Added automatically by Orchestrate when the turn finished._
+
+## 2026-11-19 — Second Pass Fixes before QA
+
+- Get the UAT advisor test users able to run the tester form and the agent summary as non-admin users
+
+_Added automatically by Orchestrate when the turn finished._

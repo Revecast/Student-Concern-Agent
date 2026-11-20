@@ -44,12 +44,16 @@ An Agentforce demo for higher education. A nightly rule-based score spots first-
 - [`context/gotchas.md`](context/gotchas.md) — what will bite you
 - [`context/history.md`](context/history.md) — shipped, parked and abandoned work
 - [`context/sessions/README.md`](context/sessions/README.md) — one record per session: what each did, decided and left open
-- Decisions in [`context/decisions/`](context/decisions/) (20, newest first):
+- Decisions in [`context/decisions/`](context/decisions/) (24, newest first):
+  - [ADR-024 — Use the revecast Google connection to update the QA script doc](context/decisions/2026-11-20-use-the-revecast-google-connection-to-update-the-qa-script-d.md)
+  - [ADR-022 — Advisor agent crisis guidance uses 911 + 988 + Counseling Center; contact edit lock deferred](context/decisions/2026-11-20-crisis-contacts-and-contact-edit-lock.md)
+  - [ADR-023 — Build the crisis fix, handoff fix and related fixes as one PR stacked on #24](context/decisions/2026-11-20-build-the-crisis-fix-handoff-fix-and-related-fixes-as-one-pr.md)
   - [ADR-017 — Use existing students for advisor testing, with UAT advisors on Avery and Morgan](context/decisions/2026-11-19-use-existing-students-for-advisor-testing-with-uat-advisors.md)
   - [ADR-019 — UAT Counselor user fills the Counseling Center queue until real crisis contacts arrive](context/decisions/2026-11-19-uat-counselor-user-fills-the-counseling-center-queue-until-r.md)
   - [ADR-018 — Turn on Einstein Trust Layer PII masking in the dev org](context/decisions/2026-11-19-turn-on-einstein-trust-layer-pii-masking-in-the-dev-org.md)
   - [ADR-020 — Prompt-injection detection on; PII masking deferred until Data Cloud](context/decisions/2026-11-19-trust-layer-injection-on-masking-blocked.md)
   - [ADR-013 — "Own students only": Account Private + advisor on the account team](context/decisions/2026-11-19-sharing-private-account-team.md)
+  - [ADR-021 — Require the Run Flows access flag on UAT and advisor flows so Flow Access grants take effect](context/decisions/2026-11-19-require-the-run-flows-access-flag-on-uat-and-advisor-flows-s.md)
   - [ADR-007 — No observability work — drop SCA-44 only](context/decisions/2026-11-19-no-observability-drop-sca-44.md)
   - [ADR-016 — Merge the reviewed branches to main, holding #9 until sharing change is signed off](context/decisions/2026-11-19-merge-the-reviewed-branches-to-main-holding-9-until-sharing.md)
   - [ADR-006 — Feature branch per story](context/decisions/2026-11-19-feature-branch-per-story.md)
