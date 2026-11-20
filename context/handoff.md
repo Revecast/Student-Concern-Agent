@@ -55,7 +55,7 @@
 **Status:** blocked — ━━ Build status (auto-checked from tool results — deploy = sf CLI exit, not runtime effect) ━━ • Code committed: yes (branch fix/SCA-22-qa-…
 
 **Done this session**
-- ━━ Build status (auto-checked from tool results — deploy = sf CLI exit, not runtime effect) ━━ • Code committed: yes (branch fix/SCA-22-qa-fixes) • Pushed to GitHub: yes • Validated (sf deploy validate): yes • Deployed to org: yes — jaxedu…
+- ━━ Build status (auto-checked from tool results — deploy = sf CLI exit, not runtime effect) ━━ • Code committed: yes (branch fix/SCA-22-qa-fixes) • Pushed to GitHub: yes • Validated (sf deploy validate): NOT verified • Deployed to org: no…
 
 **Open items**
 - Push the 4 fix branches and open their PRs (not pushed; no PRs open)
@@ -96,30 +96,29 @@
 - Decide the Skyler Adeyemi reset and the portal (SCA-32)
 - Replace the UAT Counselor stand-in with real crisis contacts
 
-**Checked live on 2026-11-20:** the repository, Google Workspace, Jira
+**Checked live on 2026-11-20:** Google Workspace, the repository
 ### Last session — 2026-11-20
 | | |
 |---|---|
 | Type | BUILD |
 | Outcome | COMPLETED |
 | Branch | `main` |
-| Name | UAT Fixes |
-| Session | `cb826f7a-fe33-4621-88ac-a0506177c6da` |
+| Name | Fixes from UAT round 2 |
+| Session | `403e781d-73e9-4eba-a271-10fac14dc939` |
 **In its own words (excerpt):**
 ━━ Build status (auto-checked from tool results — deploy = sf CLI exit, not runtime effect) ━━
 • Code committed: yes (branch fix/SCA-22-qa-fixes)
 • Pushed to GitHub: yes
-• Validated (sf deploy validate): yes
-• Deployed to org: yes — jaxedupde-dev-ed · NOT read back from the org: the deploy's result listed no components (run it with --json, and not --async, so Orchestrate can check the org)
+• Validated (sf deploy validate): NOT verified
+• Deployed to org: no deploy in this session run — if an earlier run deployed, verify in the target org
+Next: open/refresh the PR → review → merge to main → run a Deploy session to ship. This work is NOT live yet.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Both big QA failures are fixed and deployed to jaxedupde-dev-ed, and the work is in PR #25. One small part is only partly fixed: in the agent chat, the summary headings still show without their numbers. None of this has been confirmed yet by a real login as a UAT user, because I don't have those passwords.
+Everything you asked for is done on `fix/SCA-22-qa-fixes` (PR #25), except item 9: the "46 of 46" figure was wrong. The real result is 45 of 45. Nothing was merged and no records were changed. Items 5 and 6 are proposals waiting for your decision.
 
-**The 5 fixes you approved**
+## What changed
 
-| # | QA item | Result |
-|---|---|---|
-| 1 | **S6-11** crisis reply | **Fixed.** The advisor agent now gives a fixed urgent reply instead of refusing: call 911 if the student is in immediate danger, call or text 988, and contact the campus Counseling Center now. It drafts nothing. I tested it with three different crisis messages, and the QA message itself three times. A figure of speech ("this homework is killing he
+1. **Handoff Summary prompt.** Crisis words anywhere between the markers now give the URGENT line, whatever the speaker label and even with no label. The S5-5 behaviour is unchanged. Because the old version was published, this is a new version: Prompt Builder shows it as Version 4, active (file suffix `_3`). The accepted speaker labels (`Student:`, `User:`, the student's first name, `Agent:`) are now in `docs/prompt-templates.md`. One known side effe
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
