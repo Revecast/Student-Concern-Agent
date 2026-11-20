@@ -44,7 +44,9 @@ An Agentforce demo for higher education. A nightly rule-based score spots first-
 - [`context/gotchas.md`](context/gotchas.md) — what will bite you
 - [`context/history.md`](context/history.md) — shipped, parked and abandoned work
 - [`context/sessions/README.md`](context/sessions/README.md) — one record per session: what each did, decided and left open
-- Decisions in [`context/decisions/`](context/decisions/) (21, newest first):
+- Decisions in [`context/decisions/`](context/decisions/) (23, newest first):
+  - [ADR-022 — Advisor agent crisis guidance uses 911 + 988 + Counseling Center; contact edit lock deferred](context/decisions/2026-11-20-crisis-contacts-and-contact-edit-lock.md)
+  - [ADR-023 — Build the crisis fix, handoff fix and related fixes as one PR stacked on #24](context/decisions/2026-11-20-build-the-crisis-fix-handoff-fix-and-related-fixes-as-one-pr.md)
   - [ADR-017 — Use existing students for advisor testing, with UAT advisors on Avery and Morgan](context/decisions/2026-11-19-use-existing-students-for-advisor-testing-with-uat-advisors.md)
   - [ADR-019 — UAT Counselor user fills the Counseling Center queue until real crisis contacts arrive](context/decisions/2026-11-19-uat-counselor-user-fills-the-counseling-center-queue-until-r.md)
   - [ADR-018 — Turn on Einstein Trust Layer PII masking in the dev org](context/decisions/2026-11-19-turn-on-einstein-trust-layer-pii-masking-in-the-dev-org.md)

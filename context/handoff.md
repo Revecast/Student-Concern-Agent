@@ -52,10 +52,10 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-11-20
-**Status:** blocked — ━━ Build status (auto-checked from tool results — deploy = sf CLI exit, not runtime effect) ━━ • Code committed: yes (branch fix/SCA-36-flo…
+**Status:** blocked — ━━ Build status (auto-checked from tool results — deploy = sf CLI exit, not runtime effect) ━━ • Code committed: yes (branch fix/SCA-22-qa-…
 
 **Done this session**
-- ━━ Build status (auto-checked from tool results — deploy = sf CLI exit, not runtime effect) ━━ • Code committed: yes (branch fix/SCA-36-flow-access) • Pushed to GitHub: yes • Validated (sf deploy validate): NOT verified • Deployed to org:…
+- ━━ Build status (auto-checked from tool results — deploy = sf CLI exit, not runtime effect) ━━ • Code committed: yes (branch fix/SCA-22-qa-fixes) • Pushed to GitHub: yes • Validated (sf deploy validate): yes • Deployed to org: yes — jaxedu…
 
 **Open items**
 - Push the 4 fix branches and open their PRs (not pushed; no PRs open)
@@ -96,40 +96,30 @@
 - Decide the Skyler Adeyemi reset and the portal (SCA-32)
 - Replace the UAT Counselor stand-in with real crisis contacts
 
-**Checked live on 2026-11-20:** the repository
+**Checked live on 2026-11-20:** the repository, Google Workspace, Jira
 ### Last session — 2026-11-20
 | | |
 |---|---|
 | Type | BUILD |
 | Outcome | COMPLETED |
 | Branch | `main` |
-| Name | Second Pass Fixes before QA |
-| Session | `20b980b8-1be2-4706-be68-d85ccb05103a` |
+| Name | UAT Fixes |
+| Session | `cb826f7a-fe33-4621-88ac-a0506177c6da` |
 **In its own words (excerpt):**
 ━━ Build status (auto-checked from tool results — deploy = sf CLI exit, not runtime effect) ━━
-• Code committed: yes (branch fix/SCA-36-flow-access)
+• Code committed: yes (branch fix/SCA-22-qa-fixes)
 • Pushed to GitHub: yes
-• Validated (sf deploy validate): NOT verified
-• Deployed to org: no deploy in this session run — if an earlier run deployed, verify in the target org
-Next: open/refresh the PR → review → merge to main → run a Deploy session to ship. This work is NOT live yet.
+• Validated (sf deploy validate): yes
+• Deployed to org: yes — jaxedupde-dev-ed · NOT read back from the org: the deploy's result listed no components (run it with --json, and not --async, so Orchestrate can check the org)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-The fix is deployed and checked against the org, and it's in a pull request. One part isn't done: I haven't confirmed it with a real login as UAT Advisor One.
+Both big QA failures are fixed and deployed to jaxedupde-dev-ed, and the work is in PR #25. One small part is only partly fixed: in the agent chat, the summary headings still show without their numbers. None of this has been confirmed yet by a real login as a UAT user, because I don't have those passwords.
 
-**What your approved command found**
+**The 5 fixes you approved**
 
-| Flow | Extra-permission setting | Active version |
+| # | QA item | Result |
 |---|---|---|
-| SF – UAT Send Message Tester | on | v2 |
-| SUB – Find My Student | on | v2 |
-| SUB – Send Student Message | on | v2 |
-| PF – Student Risk Grounding | on | v5 |
-| SUB – Alert Assigned Advisor | off, on purpose (automation) | — |
-
-None of the four UAT users has Run Flows. All four now have Flow Access to all four flows. The script changed nothing in the org.
-
-**Your four requests**
-1. **Tester flow:** done. The setting is on, so the SYS – UAT Teste
+| 1 | **S6-11** crisis reply | **Fixed.** The advisor agent now gives a fixed urgent reply instead of refusing: call 911 if the student is in immediate danger, call or text 988, and contact the campus Counseling Center now. It drafts nothing. I tested it with three different crisis messages, and the QA message itself three times. A figure of speech ("this homework is killing he
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
@@ -158,3 +148,14 @@ QA second pass found UAT users got "Insufficient Privileges" on SF – UAT Send 
 - Deployed 0Afiw000001Rpc9CAC (9 components, 45/45 tests); read back 2026-11-20. SUB_Alert_Assigned_Advisor left unset on purpose (automation).
 - PR #24 (`fix/SCA-36-flow-access`, ff1d326), based on #22: merge after #22.
 - **Not yet confirmed by a live login as UAT Advisor One** (Orchestrate has no UAT passwords). Re-run Playwright S6-1 and the tester suite to confirm.
+
+## Update 2026-11-20 (morning): QA fixes, PR #25
+
+Session cb826f7a (UAT Fixes). PR #25 (`fix/SCA-22-qa-fixes`) is stacked on #24; merge it after #24.
+- S6-11 fixed: advisor agent v6 (active) has a Crisis Support subagent with a fixed 911 / 988 / Counseling Center reply. Tested live in preview, not by a UAT login.
+- S5-5 fixed: Student Handoff Summary version _2 treats the conversation as data only (15/15 trick runs clean).
+- S5-1: Student Risk Summary version _2 always returns numbered headings (6/6). The agent chat still shows them without numbers.
+- Side findings fixed: PF_Student_Risk_Grounding v6 (only messages sent to the student count as outreach); SUB_Alert_Assigned_Advisor v2 (no score in the title, no false "check-in sent" sentence).
+- RunLocalTests 46/46. Scoring job ran 2026-11-20 10:00 UTC (5 AM ET), next run 2026-11-21 10:00 UTC.
+- SCA-46 created: lock advisors to read-only on student Contacts (deferred, ADR-022).
+- Still open: rerun Playwright Suite 5 and S6-11 as UAT users; Counselor login for the crisis Task check (the Task "UAT test" owned by the Counseling Center exists, created 06:16 UTC); S7-3 text cut off at 1024px (standard Salesforce components, not fixed).

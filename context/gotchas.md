@@ -107,3 +107,10 @@ that it is real.
 ## Recorded 2026-11-20
 
 - **A Flow Access grant in a permission set does nothing unless the flow has `isAdditionalPermissionRequiredToRun = true`.** With it unset, users need the Run Flows permission, and non-admins without it get "Insufficient Privileges" (screen flow) or a silently failing agent action (the advisor agent said a student was "not on your caseload"). Setting it also applies the check to Apex/agent calls, so tests running as users without the grant start failing. *Hit 2026-11-19 in QA second pass (SCA-36); fixed in PR #24.* Set it on every flow a person or agent calls; leave it off record-triggered/scheduled automation subflows.
+
+## Recorded 2026-11-20 (QA fixes, PR #25)
+
+- **Changing the content of a Published prompt template version deploys as "Succeeded" but changes nothing.** The org keeps serving the old text. Add a new `<templateVersions>` block with `versionIdentifier` `<hash>_2` (keep `_1` as it is in the org) and set `activeVersionIdentifier` to `_2`. Check with the generations API using `isPreview: true` and look for the new text in `prompt`. *Hit 2026-11-20 on Student_Handoff_Summary and Student_Risk_Summary; a first retest looked like a pass but ran the old text.*
+- **The advisor agent chat drops "1." to "4." heading numbers** from a prompt template response. The template returns them, but the agent's reply shows plain "Risk:" lines. Instructions to keep the numbers did not help (identical output in 3 runs, agent v6). *Seen 2026-11-20.*
+- **The "UAT test" email to ernie.maldonado@revecast.io (sent 2026-11-20 06:09 UTC) went to Gmail Spam.** Salesforce sends from `*.sfcustomeremail.com`; expect spam filing until email deliverability / DKIM is set up. *Found 2026-11-20.*
+- **Git commits in a new session folder fail with "Author identity unknown".** Set `git config user.name/user.email` in the repo before committing or using push_changes. *Hit 2026-11-20.*
