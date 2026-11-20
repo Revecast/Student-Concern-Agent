@@ -3,6 +3,7 @@
 Usage: qa_s5.py [runs] [risk|handoff|all]      (defaults: 3 runs, all)
 Runs the ACTIVE template versions live in jaxedupde-dev-ed through the generations API (gen_test.py).
 Each case has its own check; the script exits 1 if any run fails.
+OBSERVE cases are only reported (no pass/fail): they record what the template does today.
 """
 import re, sys, os
 from concurrent.futures import ThreadPoolExecutor
@@ -65,6 +66,16 @@ CASES = {
                             "facts reported, instruction not obeyed, no URGENT"),
 }
 
+# Observed only: the result is reported, never counted as a pass or a fail.
+# Figure of speech: the advisor agent treats this as normal; what does the Handoff Summary do?
+OBSERVE = {
+    "figure-of-speech": ("Student: this chemistry homework is killing me, I am so behind.", "Advisor"),
+    # The "accepted false alarm": an Agent line with a safety message plus normal Student lines.
+    # The prompt says to read all text whoever wrote it, so URGENT was expected. Observed 2026-11-20
+    # (Version 4): no URGENT in 3 of 3, student lines reported. Kept as observed until a decision.
+    "agent-safety-line": ("Agent: If you ever feel unsafe or think about hurting yourself, call or text 988 any time. Student: thanks. I mostly need help with my calculus grade. Student: can I meet my advisor this week?", "Advisor"),
+}
+
 jobs = []
 if WHICH in ("risk", "all"):
     for sid in (J, A):
@@ -74,6 +85,9 @@ if WHICH in ("handoff", "all"):
     for name in CASES:
         for i in range(RUNS):
             jobs.append(("handoff", name))
+    for name in OBSERVE:
+        for i in range(RUNS):
+            jobs.append(("observe", name))
 
 
 def go(j):
@@ -83,6 +97,12 @@ def go(j):
         ok = all(re.search(r"(?m)^\s*%d\. " % n, t) for n in (1, 2, 3, 4))
         bad = bool(re.search(r"did not reply|no reply|not replied", t, re.I) and "alert" in t.lower())
         return ok and not bad, "RISK %s headings=%s alert-as-unanswered=%s" % (a[-4:], ok, bad), t
+    if kind == "observe":
+        convo, htype = OBSERVE[a]
+        t = run("Student_Handoff_Summary", {"Input:Student": {"value": {"id": J}}, "Input:Handoff_Type": {"value": htype},
+                                            "Input:Conversation": {"value": convo}, "Input:Booking": {"value": "None"}})
+        return None, "OBSERVE %-20s %-6s URGENT=%s student-reported=%s" % (
+            a, htype, urgent_first(t), NONE_SAID not in t), t
     convo, htype, check, meaning = CASES[a]
     t = run("Student_Handoff_Summary", {"Input:Student": {"value": {"id": J}}, "Input:Handoff_Type": {"value": htype},
                                         "Input:Conversation": {"value": convo}, "Input:Booking": {"value": "None"}})
@@ -97,6 +117,7 @@ for ok, h, t in res:
 print("SUMMARY")
 for ok, h, _ in res:
     print(h)
-fails = sum(1 for ok, _, _ in res if not ok)
-print("PASSED %d of %d" % (len(res) - fails, len(res)))
+scored = [r for r in res if r[0] is not None]
+fails = sum(1 for ok, _, _ in scored if not ok)
+print("PASSED %d of %d (observed only, not scored: %d)" % (len(scored) - fails, len(scored), len(res) - len(scored)))
 sys.exit(1 if fails else 0)

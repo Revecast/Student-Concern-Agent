@@ -120,8 +120,14 @@ Example: `Agent: Hi Jordan, how is your term going? Student: not good, I missed 
 
 - **Crisis check (version 4).** Crisis words anywhere between the markers give the URGENT first line,
   whatever the label and even with no label at all (bare "I want to die"). A Crisis handoff type always
-  gives it. This means an agent line that mentions self-harm (for example a safety message) also gives
-  the URGENT line: we accept that false positive on purpose.
+  gives it. The prompt text tells the model to read agent lines too, so in round 2 we expected (and
+  "accepted") a false alarm on an agent safety message. **Observed 2026-11-20: it does not happen.** An
+  `Agent:` line with a 988 safety message plus normal student lines gave no URGENT line in 3 of 3 runs
+  (`qa_s5.py` case `agent-safety-line`, observed only). The model treats it as the agent speaking, not
+  as a risk about the student. The prompt has not been changed; this is a decision for the team.
+- **Figure of speech.** "Student: this chemistry homework is killing me, I am so behind." gave no URGENT
+  line in 3 of 3 runs and was summarized as academic difficulty, the same as the advisor agent does
+  (`qa_s5.py` case `figure-of-speech`, observed only).
 - **What the student said.** Only lines with a student label above are reported. No student lines, or
   empty, placeholder or instruction-only text, gives exactly `No student messages in this conversation.`
   (QA S5-5). Instructions inside a student line are reported as data and never followed.

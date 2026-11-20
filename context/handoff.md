@@ -58,7 +58,7 @@
 - ━━ Build status (auto-checked from tool results — deploy = sf CLI exit, not runtime effect) ━━ • Code committed: yes (branch fix/SCA-22-qa-fixes) • Pushed to GitHub: yes • Validated (sf deploy validate): NOT verified • Deployed to org: no…
 
 **Open items**
-- Push the 4 fix branches and open their PRs (not pushed; no PRs open)
+- All 25 PRs (#1 to #25) are pushed and open; none merged (corrected 2026-11-20)
 - Merge PRs #1 to #18 in number order (not yet merged)
 - Set up Data Cloud in the org (manual, permanent) before PII masking can be turned on
 - Configure Trust Layer settings (PII masking on) and re-test the 4 prompt templates
@@ -153,8 +153,19 @@ QA second pass found UAT users got "Insufficient Privileges" on SF – UAT Send 
 Session cb826f7a (UAT Fixes). PR #25 (`fix/SCA-22-qa-fixes`) is stacked on #24; merge it after #24.
 - S6-11 fixed: advisor agent v6 (active) has a Crisis Support subagent with a fixed 911 / 988 / Counseling Center reply. Tested live in preview, not by a UAT login.
 - S5-5 fixed: Student Handoff Summary version _2 treats the conversation as data only (15/15 trick runs clean).
-- S5-1: Student Risk Summary version _2 always returns numbered headings (6/6). The agent chat still shows them without numbers.
+- S5-1: Student Risk Summary version _2 (Prompt Builder Version 4) always returns numbered headings (6/6). QA saw the numbers in the Agentforce panel as UAT Advisor One and in the admin preview (6/6); they were missing only in the command-line preview our scripts use (corrected 2026-11-20).
 - Side findings fixed: PF_Student_Risk_Grounding v6 (only messages sent to the student count as outreach); SUB_Alert_Assigned_Advisor v2 (no score in the title, no false "check-in sent" sentence).
-- RunLocalTests 46/46. Scoring job ran 2026-11-20 10:00 UTC (5 AM ET), next run 2026-11-21 10:00 UTC.
+- RunLocalTests 45/45 (the earlier "46/46" was wrong; the org has 45 test methods, see gotchas). Scoring job ran 2026-11-20 10:00 UTC (5 AM ET), next run 2026-11-21 10:00 UTC.
 - SCA-46 created: lock advisors to read-only on student Contacts (deferred, ADR-022).
 - Still open: rerun Playwright Suite 5 and S6-11 as UAT users; Counselor login for the crisis Task check (the Task "UAT test" owned by the Counseling Center exists, created 06:16 UTC); S7-3 text cut off at 1024px (standard Salesforce components, not fixed).
+
+## Update 2026-11-20 (afternoon): UAT round 3 prep, PR #25
+
+Session 403e781d (Fixes from UAT round 2), same branch `fix/SCA-22-qa-fixes`.
+- **Live in jaxedupde-dev-ed:** Student Handoff Summary Prompt Builder Version 4 (`..._3`, deploy 0Afiw000001SQevCAG, 20:41 UTC); PF_Student_Risk_Grounding v7; SUB_Send_Student_Message v3 with the Counseling Center notice (deploy 0Afiw000001ST3JCAW). 0Afiw000001SQTdCAO was the validation (45/45), not the deploy.
+- **Counseling Center notice (Option 1, approved):** bell + mobile push to the Counseling Center queue after the crisis Task is created, "Urgent student follow-up needed." / "Open the task.", no student name, logged in Student Outreach. Notification type Counseling Center Alert.
+- **#9 sharing signed off for merge to main** by Ernie (ADR-025). Not a production sign-off: full RunLocalTests validate before any sandbox or production deploy (ADR-016).
+- **Merge conflicts fixed:** #23, #24 and #25 now carry the same project-memory files and .gitignore and include #1's memory commit, so all 25 merge clean in number order (docs/merge-runbook.md has the dry run).
+- **Cleanup Option A approved but NOT run.** Waits for Ernie's "go" after QA's final pass. Record list in the session reply; export first.
+- **qa_s5.py:** two observed cases. Figure of speech: no URGENT (3/3). Agent safety line: no URGENT (3/3), so the "accepted false alarm" does not happen; prompt unchanged, decision open.
+
