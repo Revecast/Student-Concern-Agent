@@ -21,6 +21,7 @@ History
 -------
 VERSION  AUTHOR                 DATE        DETAIL    DESCRIPTION
 1.0      Revecast Orchestrate   19/11/2026  Created   SCA-36
+1.1      Revecast Orchestrate   20/11/2026  Updated   SCA-36 QA: runs as a user with the Flow Access grant
 *****************************************************************/
 @isTest
 private class StudentMessageActionTest {
@@ -46,6 +47,27 @@ private class StudentMessageActionTest {
             insert advisor;
         }
         return advisor;
+    }
+
+    private static User cachedSender;
+
+    /* The calling user: a standard user with SYS – Student Concern Automation, which grants
+       Flow Access to the flow (it requires it: isAdditionalPermissionRequiredToRun, SCA-36 QA fix). */
+    private static User sender() {
+        if (cachedSender == null) {
+            Profile standardProfile = [SELECT Id FROM Profile WHERE Name = 'Standard User' LIMIT 1];
+            cachedSender = new User(Alias = 'msgsnd', Email = 'msgsnd@automation.jaxstate.example',
+                EmailEncodingKey = 'UTF-8', LastName = 'Message Sender', LanguageLocaleKey = 'en_US',
+                LocaleSidKey = 'en_US', ProfileId = standardProfile.Id, TimeZoneSidKey = 'America/New_York',
+                Username = 'msgsnd.' + System.currentTimeMillis() + '@automation.jaxstate.example');
+            System.runAs(new User(Id = UserInfo.getUserId())) {
+                insert cachedSender;
+                PermissionSet automation = [SELECT Id FROM PermissionSet
+                    WHERE Name = 'SYS_Student_Concern_Automation' LIMIT 1];
+                insert new PermissionSetAssignment(AssigneeId = cachedSender.Id, PermissionSetId = automation.Id);
+            }
+        }
+        return cachedSender;
     }
 
     /* Creates one student, optionally with an email and an Advisee case whose team has the advisor. */
@@ -83,9 +105,12 @@ private class StudentMessageActionTest {
             'varB_IsCrisis' => isCrisis
         };
         Outcome outcome = new Outcome();
-        Test.startTest();
+        User caller = sender();
         Flow.Interview.SUB_Send_Student_Message interview = new Flow.Interview.SUB_Send_Student_Message(inputs);
-        interview.start();
+        Test.startTest();
+        System.runAs(caller) {
+            interview.start();
+        }
         Test.stopTest();
         outcome.sent = (Boolean) interview.getVariableValue('varB_Sent');
         outcome.result = (String) interview.getVariableValue('varT_Result');
@@ -189,13 +214,16 @@ private class StudentMessageActionTest {
     @isTest
     static void otherRecipientsAreRefused() {
         Contact student = makeStudent(true, null);
+        User caller = sender();
         for (String role : new List<String>{ 'Professor', 'Parent', '' }) {
             Map<String, Object> inputs = new Map<String, Object>{
                 'varT_StudentId' => student.Id, 'varP_RecipientRole' => role,
                 'varT_Subject' => SUBJECT, 'varT_Body' => BODY, 'varB_IsCrisis' => true
             };
             Flow.Interview.SUB_Send_Student_Message interview = new Flow.Interview.SUB_Send_Student_Message(inputs);
-            interview.start();
+            System.runAs(caller) {
+                interview.start();
+            }
             System.assertEquals(false, interview.getVariableValue('varB_Sent'), 'Role "' + role + '" must be refused');
         }
         System.assertEquals(0, [SELECT COUNT() FROM EmailMessage], 'No email for any refused role');
@@ -215,5 +243,25 @@ private class StudentMessageActionTest {
         System.assertEquals(1, logs.size(), 'One log row');
         System.assertEquals('Skipped', logs[0].Status__c, 'Status should be Skipped');
         System.assertNotEquals(null, logs[0].Failure_Reason__c, 'The reason should be recorded');
+    }
+
+    /* A user without the Flow Access grant cannot run the send flow at all (SCA-36 QA fix). */
+    @isTest
+    static void userWithoutFlowAccessIsRefused() {
+        User advisor = makeAdvisor();
+        Contact student = makeStudent(true, advisor);
+        Flow.Interview.SUB_Send_Student_Message interview = new Flow.Interview.SUB_Send_Student_Message(
+            new Map<String, Object>{ 'varT_StudentId' => student.Id, 'varP_RecipientRole' => 'Student',
+                'varT_Subject' => SUBJECT, 'varT_Body' => BODY, 'varB_IsCrisis' => false });
+        Boolean refused = false;
+        System.runAs(advisor) {
+            try {
+                interview.start();
+            } catch (System.NoAccessException e) {
+                refused = true;
+            }
+        }
+        System.assert(refused, 'Without the Flow Access grant the flow must not run');
+        System.assertEquals(0, [SELECT COUNT() FROM EmailMessage], 'Nothing is sent');
     }
 }

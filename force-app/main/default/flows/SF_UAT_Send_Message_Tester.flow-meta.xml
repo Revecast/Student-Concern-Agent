@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>68.0</apiVersion>
-    <description>UAT ONLY - REMOVE BEFORE GO-LIVE (fix WP-10). Gives testers and a browser agent a screen to call SUB - Send Student Message, the only send path (SCA-36). It passes what the tester types straight to that flow, unchanged, so it cannot weaken the contact rule (ADR-001): the recipient role is free text so invalid roles can be tried and must be refused. The student is found by email, as the running user, so an advisor reaches only their own students. Access only through the SYS - UAT Tester permission set.</description>
+    <description>UAT ONLY - REMOVE BEFORE GO-LIVE (fix WP-10). Gives testers and a browser agent a screen to call SUB - Send Student Message, the only send path (SCA-36). It passes what the tester types straight to that flow, unchanged, so it cannot weaken the contact rule (ADR-001): the recipient role is free text so invalid roles can be tried and must be refused. The student is found by email, as the running user, so an advisor reaches only their own students. Access only through the SYS - UAT Tester permission set. v2: runs only for users granted Flow Access (isAdditionalPermissionRequiredToRun), so the permission set grant applies without Run Flows (SCA-36 QA fix).</description>
     <environments>Default</environments>
-    <interviewLabel>SF – UAT Send Message Tester {!$Flow.CurrentDateTime}</interviewLabel>
+    <interviewLabel>SF – UAT Send Message Tester {!$Flow.CurrentDateTime}</interviewLabel><isAdditionalPermissionRequiredToRun>true</isAdditionalPermissionRequiredToRun>
     <label>SF – UAT Send Message Tester</label>
     <processMetadataValues>
         <name>BuilderType</name>

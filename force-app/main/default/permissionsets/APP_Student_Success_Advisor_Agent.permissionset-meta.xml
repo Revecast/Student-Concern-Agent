@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
   <label>APP – Student Success Advisor Agent</label>
-  <description>Lets advisors use the Student Success Advisor Agent (employee agent) and run its Find My Student gate flow. The agent only works with the advisor's own assigned students. Users also need the Einstein Prompt Templates licence to run its templates. SCA-22.</description>
+  <description>Lets advisors use the Student Success Advisor Agent (employee agent) and run its flows: Find My Student and the summary grounding flow. Own assigned students only. Also needs the Einstein Prompt Templates licence. SCA-22, SCA-36.</description>
   <hasActivationRequired>false</hasActivationRequired>
   <agentAccesses><agentName>Student_Success_Advisor_Agent</agentName><enabled>true</enabled></agentAccesses>
-  <flowAccesses><enabled>true</enabled><flow>SUB_Find_My_Student</flow></flowAccesses>
+  <flowAccesses><enabled>true</enabled><flow>PF_Student_Risk_Grounding</flow></flowAccesses><flowAccesses><enabled>true</enabled><flow>SUB_Find_My_Student</flow></flowAccesses>
 </PermissionSet>
