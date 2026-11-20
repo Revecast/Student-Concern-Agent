@@ -1,0 +1,14 @@
+{
+  "required" : [ "varT_StudentName" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "varT_StudentName" : {
+      "title" : "Var T Student Name",
+      "description" : "The student's full name, for example Jordan Rivera.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

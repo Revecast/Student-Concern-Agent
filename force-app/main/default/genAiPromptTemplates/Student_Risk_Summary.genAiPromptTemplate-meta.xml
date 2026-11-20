@@ -1,9 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
-    <activeVersionIdentifier>EMtrvj35oei7s4GOGBSJz/6azw3hc0cVYwvcEmhZJFs=_1</activeVersionIdentifier>
+    <activeVersionIdentifier>EMtrvj35oei7s4GOGBSJz/6azw3hc0cVYwvcEmhZJFs=_2</activeVersionIdentifier>
     <description>SCA-17. Factual summary of a student's risk, attendance, grades and recent outreach for their assigned advisor. Uses only the student's record; says "Not available" instead of guessing. For the advisor agent (SCA-22).</description>
     <developerName>Student_Risk_Summary</developerName>
     <masterLabel>Student Risk Summary</masterLabel>
+    <templateVersions>
+        <content>You are helping a university academic advisor get ready to contact one of their first-year students. Write a short, factual summary for the advisor only.
+
+Use only the student data below. Do not guess, estimate or add anything that is not in it. If a piece of information is missing or empty, write &quot;Not available&quot; for it instead of guessing. Do not give advice about the student&apos;s health or personal life. Do not include the student&apos;s email, phone or ID.
+
+Student: {!$Input:Student.FirstName} {!$Input:Student.LastName}
+{!$Flow:PF_Student_Risk_Grounding.Prompt}
+
+Write the summary in plain language, under 150 words, with these four headings:
+1. Risk: the score and the risk reason in one sentence. Say the student was flagged only if Flagged is yes. If the risk reason is &quot;Not available&quot;, say so.
+2. Attendance: the missed classes stated in the risk reason, or &quot;Not available&quot; if the reason does not mention classes.
+3. Grades: each course with its current grade and the change from two weeks ago, or &quot;Not available&quot;.
+4. Recent outreach: what was sent and whether the student replied, or &quot;None yet&quot;.
+</content>
+        <inputs>
+            <apiName>Student</apiName>
+            <definition>SOBJECT://Contact</definition>
+            <masterLabel>Student</masterLabel>
+            <referenceName>Input:Student</referenceName>
+            <required>true</required>
+        </inputs>
+        <isCitationEnabled>false</isCitationEnabled>
+        <primaryModel>sfdc_ai__DefaultGPT4Omni</primaryModel>
+        <status>Published</status>
+        <templateDataProviders>
+            <definition>flow://PF_Student_Risk_Grounding</definition>
+            <parameters>
+                <definition>SOBJECT://Contact</definition>
+                <isRequired>true</isRequired>
+                <parameterName>Student</parameterName>
+                <valueExpression>{!$Input:Student}</valueExpression>
+            </parameters>
+            <referenceName>Flow:PF_Student_Risk_Grounding</referenceName>
+        </templateDataProviders>
+        <versionIdentifier>EMtrvj35oei7s4GOGBSJz/6azw3hc0cVYwvcEmhZJFs=_1</versionIdentifier>
+    </templateVersions>
     <templateVersions>
         <content>You are helping a university academic advisor get ready to contact one of their first-year students. Write a short, factual summary for the advisor only.
 
@@ -12,11 +48,11 @@ Use only the student data below. Do not guess, estimate or add anything that is 
 Student: {!$Input:Student.FirstName} {!$Input:Student.LastName}
 {!$Flow:PF_Student_Risk_Grounding.Prompt}
 
-Write the summary in plain language, under 150 words, with these four headings:
+Write the summary in plain language, under 150 words. Use exactly these four numbered headings, in this order, each starting its own line with the number, a full stop and the heading word, for example "1. Risk:". Always write all four numbers and headings, even when the content is "Not available". Do not use bold, bullets or markdown in place of the numbers.
 1. Risk: the score and the risk reason in one sentence. Say the student was flagged only if Flagged is yes. If the risk reason is "Not available", say so.
 2. Attendance: the missed classes stated in the risk reason, or "Not available" if the reason does not mention classes.
 3. Grades: each course with its current grade and the change from two weeks ago, or "Not available".
-4. Recent outreach: what was sent and whether the student replied, or "None yet".
+4. Recent outreach: only the messages listed as sent to the student, and whether the student replied, or "None yet". Advisor alerts and tasks are not messages to the student; never describe them as unanswered messages.
 </content>
         <inputs>
             <apiName>Student</apiName>
@@ -37,7 +73,7 @@ Write the summary in plain language, under 150 words, with these four headings:
             </parameters>
             <referenceName>Flow:PF_Student_Risk_Grounding</referenceName>
         </templateDataProviders>
-        <versionIdentifier>EMtrvj35oei7s4GOGBSJz/6azw3hc0cVYwvcEmhZJFs=_1</versionIdentifier>
+        <versionIdentifier>EMtrvj35oei7s4GOGBSJz/6azw3hc0cVYwvcEmhZJFs=_2</versionIdentifier>
     </templateVersions>
     <type>einstein_gpt__flex</type>
     <visibility>Global</visibility>
