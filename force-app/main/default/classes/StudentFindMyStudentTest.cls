@@ -16,14 +16,20 @@ History
 -------
 VERSION  AUTHOR                 DATE        DETAIL    DESCRIPTION
 1.0      Revecast Orchestrate   19/11/2026  Created   SCA-22
+1.1      Revecast Orchestrate   20/11/2026  Updated   SCA-36 QA: Flow Access grant, refusal test
 *****************************************************************/
 @isTest
 private class StudentFindMyStudentTest {
 
     private static final String NOT_ASSIGNED = 'That student is not on your caseload';
 
-    /* Creates a standard user to act as an advisor. */
+    /* Creates a standard user to act as an advisor, with the advisor agent's Flow Access grant. */
     private static User makeAdvisor(String alias) {
+        return makeAdvisor(alias, true);
+    }
+
+    /* Creates a standard user to act as an advisor; withFlowAccess adds APP – Student Success Advisor Agent. */
+    private static User makeAdvisor(String alias, Boolean withFlowAccess) {
         Profile standardProfile = [SELECT Id FROM Profile WHERE Name = 'Standard User' LIMIT 1];
         User advisor = new User(Alias = alias, Email = alias + '@advisor.jaxstate.example', EmailEncodingKey = 'UTF-8',
             LastName = 'Advisor ' + alias, LanguageLocaleKey = 'en_US', LocaleSidKey = 'en_US',
@@ -31,6 +37,12 @@ private class StudentFindMyStudentTest {
             Username = alias + '.' + System.currentTimeMillis() + '@advisor.jaxstate.example');
         System.runAs(new User(Id = UserInfo.getUserId())) {
             insert advisor;
+            if (withFlowAccess) {
+                // The flow requires Flow Access (isAdditionalPermissionRequiredToRun); advisors get it here.
+                PermissionSet agentAccess = [SELECT Id FROM PermissionSet
+                    WHERE Name = 'APP_Student_Success_Advisor_Agent' LIMIT 1];
+                insert new PermissionSetAssignment(AssigneeId = advisor.Id, PermissionSetId = agentAccess.Id);
+            }
         }
         return advisor;
     }
@@ -107,5 +119,19 @@ private class StudentFindMyStudentTest {
         System.assertEquals(false, interview.getVariableValue('varB_IsAssigned'), 'Ambiguous name must not pass');
         System.assert(String.isBlank((String) interview.getVariableValue('varT_StudentId')), 'No Id may be returned');
         System.assert(((String) interview.getVariableValue('varT_Result')).startsWith('More than one'), 'Asks for detail');
+    }
+
+    /* An advisor without the Flow Access grant cannot run the gate at all (SCA-36 QA fix). */
+    @isTest
+    static void advisorWithoutFlowAccessIsRefused() {
+        User noAccess = makeAdvisor('fmsnone', false);
+        makeStudent('Avery', 'Gatetest', noAccess);
+        Boolean refused = false;
+        try {
+            find(noAccess, 'Avery Gatetest');
+        } catch (System.NoAccessException e) {
+            refused = true;
+        }
+        System.assert(refused, 'Without APP – Student Success Advisor Agent the flow must not run');
     }
 }

@@ -17,6 +17,7 @@ History
 -------
 VERSION  AUTHOR                 DATE        DETAIL    DESCRIPTION
 1.0      Revecast Orchestrate   19/11/2026  Created   SCA-14
+1.1      Revecast Orchestrate   20/11/2026  Updated   SCA-36 QA: non-admin crossing test
 *****************************************************************/
 @isTest
 private class StudentAdvisorAlertTest {
@@ -124,6 +125,37 @@ private class StudentAdvisorAlertTest {
             System.assertEquals('None', logRow.Exception_Used__c, 'No exception is used for the advisor');
             System.assertEquals('Sent', logRow.Status__c, 'Both steps should be logged as sent');
         }
+    }
+
+    /* SCA-36 QA: the record-triggered crossing flow and its SUB – Alert Assigned Advisor subflow still run
+       when a NON-admin changes the score: a Standard User with no Run Flows and no Flow Access grants,
+       holding only edit access to the risk fields. */
+    @isTest
+    static void crossingByNonAdminStillAlertsTheAdvisor() {
+        User advisor = makeUser('advnon');
+        User scorer = makeUser('scorer');
+        List<Contact> students = makeStudents(1, advisor);
+        System.runAs(new User(Id = UserInfo.getUserId())) {
+            PermissionSet dataEdit = [SELECT Id FROM PermissionSet
+                WHERE Name = 'DATA_Student_Success_Create_Update' LIMIT 1];
+            insert new PermissionSetAssignment(AssigneeId = scorer.Id, PermissionSetId = dataEdit.Id);
+        }
+        // Accounts are Private: give the scorer edit on this student's account (Contact is controlled by parent).
+        insert new AccountShare(AccountId = [SELECT AccountId FROM Contact WHERE Id = :students[0].Id].AccountId,
+            UserOrGroupId = scorer.Id, AccountAccessLevel = 'Edit', OpportunityAccessLevel = 'None',
+            CaseAccessLevel = 'None');
+        System.assertEquals(0, [SELECT COUNT() FROM PermissionSetAssignment
+            WHERE AssigneeId = :scorer.Id AND PermissionSet.PermissionsRunFlow = true], 'Scorer must not have Run Flows');
+
+        System.runAs(scorer) {
+            rescore(students, CROSSING_SCORE);
+        }
+
+        Id studentId = students[0].Id;
+        System.assertEquals(1, [SELECT COUNT() FROM RecordAlert WHERE WhatId = :studentId AND OwnerId = :advisor.Id],
+            'The subflow should still alert the assigned advisor');
+        System.assertEquals(1, [SELECT COUNT() FROM Task WHERE WhoId = :studentId AND OwnerId = :advisor.Id],
+            'The subflow should still create the advisor task');
     }
 
     /* AC2: no assigned advisor sends everything to the Advising Queue and logs the exception. */
