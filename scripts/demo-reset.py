@@ -23,10 +23,15 @@ What it does, in order (stops at the first problem):
 --rehearse uses today as the demo day and, instead of waiting for 02:00, runs the scorer a
 second time straight away so you can see the alert now. --dry-run stops after the export and the count by student.
 
+On demo morning run --check: one PASS/FAIL line each for Jordan, his alert/Task/outreach, other
+students, the expected score table and the scorer's last run. It only reads; it changes nothing.
+
 The script never deletes anything outside those 22 students, never touches the 220 bulk-test
 students, and never edits a risk score. Deleted records stay in the Recycle Bin for 15 days.
 """
 import argparse
+import re
+import shutil
 import csv
 import datetime as dt
 import json
@@ -39,13 +44,17 @@ from zoneinfo import ZoneInfo
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LOADER = os.path.join(ROOT, "scripts", "apex", "load-demo-data.apex")
-SCHEDULER = os.path.join(ROOT, "scripts", "schedule-scoring.sh")
 BULK_ACCOUNT = "DEMO - Bulk Test Students (safe to delete)"
 DEMO_DOMAIN = "@student.jaxstate.example"
 NO_ADVISOR_EMAIL = "uat.noadvisor@uat.student.jaxstate.example"
 EXPECTED_STUDENTS = 22  # 21 demo students + UAT No-Advisor Student
 ALERT_LIMIT = 6
 API = "v68.0"
+PRESENTER_USERNAME = "ernie.maldonado@revecast.io.edupde"  # same advisor as load-demo-data.apex
+JORDAN_DEMO_LOGIN_DAYS = 5
+
+sys.path.insert(0, os.path.join(ROOT, "scripts"))
+import crossing_table  # noqa: E402  (the scoring model the expected table comes from)
 
 
 def sf(args, check=True):
@@ -228,12 +237,51 @@ def run_loader(org, demo_date, jordan_days):
     print("   " + (line[0].split("|")[-1] if line else "load done"))
 
 
+FLOW_FILE = os.path.join(ROOT, "force-app", "main", "default", "flows", "SCH_Score_First_Year_Students.flow-meta.xml")
+
+
 def schedule(org, mode, minutes=2):
-    args = [SCHEDULER, mode] + ([str(minutes)] if mode == "now" else []) + [org]
-    proc = subprocess.run(["bash"] + args, capture_output=True, text=True)
-    if proc.returncode != 0:
-        sys.exit("Scheduling the scorer failed:\n" + (proc.stdout + proc.stderr)[-2000:])
-    print("   " + proc.stdout.strip().replace("\n", "\n   "))
+    """Moves the scorer's start time by re-deploying its flow with a new schedule.
+
+    A scheduled flow has no run-now button. 'now' = once in `minutes`, then daily at that time
+    (always follow with 'nightly'); 'nightly' = back to 02:00 org time. Pure Python, so it works
+    on macOS and Linux alike (no GNU date or jq). The repo's flow file is not changed."""
+    org_tz = ZoneInfo(query(org, "SELECT TimeZoneSidKey FROM Organization")[0]["TimeZoneSidKey"])
+    now = dt.datetime.now(org_tz)
+    if mode == "now":
+        start = now + dt.timedelta(minutes=minutes)
+        start_date, start_time = start.strftime("%Y-%m-%d"), start.strftime("%H:%M:00")
+    else:
+        start_date, start_time = now.strftime("%Y-%m-%d"), "02:00:00"  # next 02:00 on or after today
+    src = open(FLOW_FILE).read()
+    new_src, n = re.subn(r"<startDate>[^<]*</startDate><startTime>[^<]*</startTime>",
+                         "<startDate>%s</startDate><startTime>%s.000Z</startTime>" % (start_date, start_time), src)
+    if n != 1:
+        sys.exit("Could not find the schedule in " + FLOW_FILE)
+    work = tempfile.mkdtemp()
+    os.makedirs(os.path.join(work, "src", "flows"))
+    project = json.load(open(os.path.join(ROOT, "sfdx-project.json")))
+    project["packageDirectories"] = [{"path": "src", "default": True}]
+    json.dump(project, open(os.path.join(work, "sfdx-project.json"), "w"))
+    with open(os.path.join(work, "src", "flows", os.path.basename(FLOW_FILE)), "w") as fh:
+        fh.write(new_src)
+    print("   Scheduling the scorer for %s %s (%s) in %s" % (start_date, start_time, org_tz.key, org))
+    proc = subprocess.run(["sf", "project", "deploy", "start", "-d", "src", "-o", org, "-l", "RunSpecifiedTests",
+                           "-t", "StudentAbsenceCounterTest", "-w", "15", "--json"],
+                          cwd=work, capture_output=True, text=True, stdin=subprocess.DEVNULL)
+    shutil.rmtree(work, ignore_errors=True)
+    try:
+        status = json.loads(proc.stdout)["result"]["status"]
+    except (json.JSONDecodeError, KeyError, TypeError):
+        status = "unknown"
+    if status != "Succeeded":
+        sys.exit("Scheduling the scorer failed (deploy status %s):\n%s" % (status, (proc.stdout + proc.stderr)[-1500:]))
+    cron = query(org, "SELECT NextFireTime FROM CronTrigger WHERE CronJobDetail.Name LIKE 'SCH_Score_First_Year_Students%'")
+    if len(cron) != 1:
+        sys.exit("Expected one scorer schedule, found %d." % len(cron))
+    nxt = dt.datetime.fromisoformat(cron[0]["NextFireTime"].replace("+0000", "+00:00")).astimezone(org_tz)
+    print("   Succeeded. Next run: %s" % nxt.strftime("%Y-%m-%d %H:%M %Z"))
+    return nxt
 
 
 def score_now(org, student_ids, label):
@@ -261,6 +309,99 @@ def scores(org, student_ids):
                  "WHERE Id IN " + id_list(student_ids) + " ORDER BY Risk_Score__c DESC NULLS LAST, Name")
 
 
+def check(org, org_tz):
+    """Read-only demo-morning check. Prints one PASS/FAIL line per item and changes nothing."""
+    today = dt.datetime.now(org_tz).date()
+    results = []
+
+    def line(ok, label, detail):
+        results.append(ok)
+        print("%s  %s: %s" % ("PASS" if ok else "FAIL", label, detail))
+
+    students = find_students(org)
+    ids = [s["Id"] for s in students]
+    rows = {r["Name"]: r for r in query(org, "SELECT Id, Name, Risk_Score__c, Risk_Reason__c, Risk_Last_Alerted_Date__c, "
+                                        "Risk_Scored_At__c FROM Contact WHERE Id IN " + id_list(ids))}
+    jordan = rows["Jordan Rivera"]
+    me = query(org, "SELECT Id FROM User WHERE Username = '" + PRESENTER_USERNAME + "'")[0]["Id"]
+    login = query(org, "SELECT Last_Login__c FROM Classroom_Activity__c WHERE Student__c = '" + jordan["Id"]
+                  + "' ORDER BY Last_Login__c DESC LIMIT 1")
+    login_day = dt.datetime.fromisoformat(login[0]["Last_Login__c"].replace("+0000", "+00:00")).astimezone(org_tz).date()
+    demo_day = login_day + dt.timedelta(days=JORDAN_DEMO_LOGIN_DAYS)
+    k = (today - demo_day).days
+    print("Org date %s; demo data dated to %s (demo day %+d)" % (today, demo_day, k))
+
+    # 1. Jordan at 7 with today's alert date
+    alerted = jordan["Risk_Last_Alerted_Date__c"]
+    line(jordan["Risk_Score__c"] == 7 and alerted == today.isoformat(), "Jordan at 7, alerted today",
+         "score %s, last alerted %s" % (jordan["Risk_Score__c"], alerted or "blank"))
+
+    # 2. exactly one alert, one open Task, two outreach rows - all Jordan's, for the presenter
+    cases = [r["Id"] for r in query(org, "SELECT Id FROM Case WHERE ContactId IN " + id_list(ids))]
+    parents = id_list(ids + cases)
+    jordan_parents = set([jordan["Id"]] + [r["Id"] for r in query(
+        org, "SELECT Id FROM Case WHERE ContactId = '" + jordan["Id"] + "'")])
+    alerts = query(org, "SELECT Name, WhatId, ParentId, OwnerId FROM RecordAlert WHERE IsActive = true")
+    tasks = query(org, "SELECT Subject, WhoId, WhatId, OwnerId FROM Task WHERE IsClosed = false AND "
+                  "(WhoId IN " + id_list(ids) + " OR WhatId IN " + parents + ")")
+    outreach = query(org, "SELECT Name, Student__c, Channel__c, Recipient_User__c, Status__c FROM Student_Outreach__c "
+                     "WHERE Student__c IN " + id_list(ids))
+    ok_alerts = len(alerts) == 1 and (alerts[0]["WhatId"] in jordan_parents or alerts[0]["ParentId"] in jordan_parents) \
+        and alerts[0]["OwnerId"] == me
+    ok_tasks = len(tasks) == 1 and (tasks[0]["WhoId"] in jordan_parents or tasks[0]["WhatId"] in jordan_parents) \
+        and tasks[0]["OwnerId"] == me
+    ok_out = len(outreach) == 2 and all(o["Student__c"] == jordan["Id"] and o["Recipient_User__c"] == me
+                                        and o["Status__c"] == "Sent" for o in outreach) \
+        and sorted(o["Channel__c"] for o in outreach) == ["In-App Notification", "Task"]
+    line(ok_alerts and ok_tasks and ok_out, "One alert, one open Task, two outreach rows, all Jordan's, for you",
+         "active alerts in the org %d (%s); open Tasks %d; outreach rows %d (%s)" % (
+             len(alerts), ", ".join(a["Name"] for a in alerts) or "none", len(tasks), len(outreach),
+             ", ".join("%s %s" % (o["Name"], o["Channel__c"]) for o in outreach) or "none"))
+
+    # 3. no other demo student at 6 or more (UAT No-Advisor Student is not a demo student)
+    high = ["%s %s" % (n, r["Risk_Score__c"]) for n, r in rows.items()
+            if n not in ("Jordan Rivera", "UAT No-Advisor Student") and (r["Risk_Score__c"] or 0) >= ALERT_LIMIT]
+    line(not high, "No other demo student at %d or more" % ALERT_LIMIT, ", ".join(high) or "nobody")
+
+    # 4. expected score table (the scoring model for this demo day)
+    # The evening before (demo day -1) the reset's first run scored Jordan with a 3-day login.
+    model = crossing_table.crossings(k + 1) if k >= 0 else {}
+    wrong = []
+    for name, (absences, login_days, grades) in crossing_table.COHORT.items():
+        if k >= 0:
+            expected = model[name][0][k]
+        else:
+            evening = crossing_table.JORDAN_EVENING_LOGIN if name == "Jordan Rivera" else login_days
+            expected = crossing_table.score(absences, evening, grades, k)
+        if rows[name]["Risk_Score__c"] != expected:
+            wrong.append("%s %s (expected %s)" % (name, rows[name]["Risk_Score__c"], expected))
+    line(not wrong, "Scores match the expected table for demo day %+d" % k,
+         ", ".join(wrong) if wrong else "21 of 21 as expected")
+
+    # 5. the scorer's last run and its schedule
+    cron = query(org, "SELECT State, NextFireTime, PreviousFireTime FROM CronTrigger "
+                 "WHERE CronJobDetail.Name LIKE 'SCH_Score_First_Year_Students%'")
+    demo_rows = [r for n, r in rows.items() if n != "UAT No-Advisor Student"]
+    last = max(dt.datetime.fromisoformat(r["Risk_Scored_At__c"].replace("+0000", "+00:00")) for r in demo_rows
+               if r["Risk_Scored_At__c"]).astimezone(org_tz)
+    scored_today = sum(1 for r in demo_rows if r["Risk_Scored_At__c"] and dt.datetime.fromisoformat(
+        r["Risk_Scored_At__c"].replace("+0000", "+00:00")).astimezone(org_tz).date() == today)
+    state = cron[0]["State"] if len(cron) == 1 else "%d schedules" % len(cron)
+    nxt = dt.datetime.fromisoformat(cron[0]["NextFireTime"].replace("+0000", "+00:00")).astimezone(org_tz) \
+        if len(cron) == 1 and cron[0]["NextFireTime"] else None
+    line(len(cron) == 1 and state == "WAITING" and scored_today == 21 and nxt is not None and nxt.hour == 2,
+         "Scorer ran today and is scheduled",
+         "last run %s (%d of 21 scored today); schedule %s, next run %s" % (
+             last.strftime("%Y-%m-%d %H:%M %Z"), scored_today, state, nxt.strftime("%Y-%m-%d %H:%M %Z") if nxt else "none"))
+
+    print("Scores now:")
+    for name, r in sorted(rows.items(), key=lambda x: (-(x[1]["Risk_Score__c"] or 0), x[0])):
+        print("   %-24s %s  %s" % (name, r["Risk_Score__c"], r["Risk_Reason__c"] or ""))
+    print("%s: %d of %d checks passed. Nothing was changed." % ("READY" if all(results) else "NOT READY",
+                                                              sum(results), len(results)))
+    sys.exit(0 if all(results) else 1)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--demo-date", help="demo day, YYYY-MM-DD (not needed with --rehearse)")
@@ -268,12 +409,29 @@ def main():
     ap.add_argument("--rehearse", action="store_true", help="demo day = today; show the alert now")
     ap.add_argument("--dry-run", action="store_true", help="list and export only; change nothing")
     ap.add_argument("--yes", action="store_true", help="do not ask before deleting")
+    ap.add_argument("--score-now", action="store_true", help="Plan B: run the scorer now, put 02:00 back, "
+                    "then --check. Deletes nothing")
+    ap.add_argument("--check", action="store_true", help="demo morning: read-only PASS/FAIL check; changes nothing")
     ap.add_argument("--approved-ids", help="ids.json of an earlier, approved export; stop if any "
                     "record to delete is not in it")
     a = ap.parse_args()
 
     org_tz = ZoneInfo(query(a.org, "SELECT TimeZoneSidKey FROM Organization")[0]["TimeZoneSidKey"])
     today = dt.datetime.now(org_tz).date()
+    if a.score_now:
+        # Plan B (demo morning, Jordan still at 4): score now, wait, put 02:00 back, then check.
+        started = time.time()
+        students = find_students(a.org)
+        print("Plan B: scoring all students now")
+        score_now(a.org, [s["Id"] for s in students], "scorer")
+        print("Putting the scorer back on 02:00 Pacific")
+        schedule(a.org, "nightly")
+        print("Took %d minutes. Checking:" % round((time.time() - started) / 60))
+        check(a.org, org_tz)
+        return
+    if a.check:
+        check(a.org, org_tz)
+        return
     if a.rehearse:
         demo_date = today
     elif a.demo_date:

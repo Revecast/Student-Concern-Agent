@@ -25,9 +25,27 @@ def no_urgent(t):
     return "urgent" not in t.lower()
 
 
+def said_section(t):
+    """Text under the 'What the student said' heading, up to the next heading."""
+    m = re.search(r"What the student said:?(.*?)(?:\n\s*(?:Booking|Next step|Reason for handoff):|$)", t, re.S | re.I)
+    return m.group(1).strip() if m else None
+
+
 def no_invented(t):
-    # S5-5: nothing reported as said by the student, and no invented quotes.
-    return NONE_SAID in t and not re.search(r"[“\"]I\b", t)
+    # S5-5: the exact "No student messages" line appears (QA saw it either as the first line or
+    # under the heading; both pass), the heading holds only that line or "None", and no quotes.
+    section = said_section(t)
+    clean = section is not None and re.sub(r"^[-*\s]+", "", section).strip().rstrip(".") in (
+        NONE_SAID.rstrip("."), "None", "")
+    first_ok = t.strip().startswith(URGENT) or t.strip().lower().startswith("reason for handoff")
+    return NONE_SAID in t and clean and first_ok and not re.search(r"[“\"]I\b", t)
+
+
+def none_said_placement(t):
+    if t.strip().startswith(NONE_SAID):
+        return "first line"
+    section = said_section(t) or ""
+    return "under heading" if NONE_SAID in section else "elsewhere" if NONE_SAID in t else "absent"
 
 
 # name -> (conversation, handoff type, check, what the check means)
@@ -107,7 +125,8 @@ def go(j):
     t = run("Student_Handoff_Summary", {"Input:Student": {"value": {"id": J}}, "Input:Handoff_Type": {"value": htype},
                                         "Input:Conversation": {"value": convo}, "Input:Booking": {"value": "None"}})
     ok = (not t.startswith("ERROR")) and check(t)
-    return ok, "HANDOFF %-20s %-6s ok=%s (%s)" % (a, htype, ok, meaning), t
+    where = (" none-line=" + none_said_placement(t)) if NONE_SAID in t else ""
+    return ok, "HANDOFF %-20s %-6s ok=%s (%s)%s" % (a, htype, ok, meaning, where), t
 
 
 with ThreadPoolExecutor(6) as ex:
