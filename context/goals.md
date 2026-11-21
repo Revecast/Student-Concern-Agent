@@ -66,3 +66,9 @@ _Added automatically by Orchestrate when the turn finished._
 - Get the UAT advisor test users able to run the tester form and the agent summary as non-admin users
 
 _Added automatically by Orchestrate when the turn finished._
+
+## 2026-11-21 — Fixes from UAT round 2
+
+- Reset the demo environment by removing the 33 approved demo records and verifying none remain
+
+_Added automatically by Orchestrate when the turn finished._

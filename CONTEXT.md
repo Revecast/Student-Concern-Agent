@@ -44,9 +44,14 @@ An Agentforce demo for higher education. A nightly rule-based score spots first-
 - [`context/gotchas.md`](context/gotchas.md) — what will bite you
 - [`context/history.md`](context/history.md) — shipped, parked and abandoned work
 - [`context/sessions/README.md`](context/sessions/README.md) — one record per session: what each did, decided and left open
-- Decisions in [`context/decisions/`](context/decisions/) (24, newest first):
+- Decisions in [`context/decisions/`](context/decisions/) (29, newest first):
+  - [ADR-029 — Delete demo leftovers via per-record CLI delete, not the REST request body](context/decisions/2026-11-21-delete-demo-leftovers-via-per-record-cli-delete-not-the-rest.md)
   - [ADR-024 — Use the revecast Google connection to update the QA script doc](context/decisions/2026-11-20-use-the-revecast-google-connection-to-update-the-qa-script-d.md)
+  - [ADR-025 — Sharing change in PR #9 signed off for merging to main (not for production)](context/decisions/2026-11-20-sign-off-sharing-change-pr-9-for-main.md)
+  - [ADR-028 — Delete the 'Email: UAT test' Tasks on Avery's timeline along with their emails](context/decisions/2026-11-20-delete-the-email-uat-test-tasks-on-avery-s-timeline-along-wi.md)
+  - [ADR-027 — Delete both the UAT outreach email and its record when cleaning up test data](context/decisions/2026-11-20-delete-both-the-uat-outreach-email-and-its-record-when-clean.md)
   - [ADR-022 — Advisor agent crisis guidance uses 911 + 988 + Counseling Center; contact edit lock deferred](context/decisions/2026-11-20-crisis-contacts-and-contact-edit-lock.md)
+  - [ADR-026 — Cleanup Option A: final record list (not yet run)](context/decisions/2026-11-20-cleanup-option-a-final-record-list.md)
   - [ADR-023 — Build the crisis fix, handoff fix and related fixes as one PR stacked on #24](context/decisions/2026-11-20-build-the-crisis-fix-handoff-fix-and-related-fixes-as-one-pr.md)
   - [ADR-017 — Use existing students for advisor testing, with UAT advisors on Avery and Morgan](context/decisions/2026-11-19-use-existing-students-for-advisor-testing-with-uat-advisors.md)
   - [ADR-019 — UAT Counselor user fills the Counseling Center queue until real crisis contacts arrive](context/decisions/2026-11-19-uat-counselor-user-fills-the-counseling-center-queue-until-r.md)

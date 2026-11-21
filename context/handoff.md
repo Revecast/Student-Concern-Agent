@@ -51,21 +51,21 @@
 <!-- orchestrate:session-state:start -->
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
-### Engagement state — 2026-11-20
+### Engagement state — 2026-11-21
 **Status:** blocked — ━━ Build status (auto-checked from tool results — deploy = sf CLI exit, not runtime effect) ━━ • Code committed: yes (branch fix/SCA-22-qa-…
 
 **Done this session**
 - ━━ Build status (auto-checked from tool results — deploy = sf CLI exit, not runtime effect) ━━ • Code committed: yes (branch fix/SCA-22-qa-fixes) • Pushed to GitHub: yes • Validated (sf deploy validate): NOT verified • Deployed to org: no…
 
 **Open items**
-- All 25 PRs (#1 to #25) are pushed and open; none merged (corrected 2026-11-20)
+- Approve the error-visible delete-format test and read the response
+- Rerun the rehearsal deleting the 33 approved records (may trigger an Approve card)
+- Push the 4 fix branches and open their PRs (not pushed; no PRs open)
 - Merge PRs #1 to #18 in number order (not yet merged)
 - Set up Data Cloud in the org (manual, permanent) before PII masking can be turned on
 - Configure Trust Layer settings (PII masking on) and re-test the 4 prompt templates
-- Provide UAT user credentials to Claude as environment variables and run the Playwright QA script (credentials handed over, run not yet done)
+- Provide UAT user credentials as environment variables and run the Playwright QA script
 - Watch for Salesforce email verification codes when Playwright logs in from a new browser
-- Run alert tests on Avery Chen and the no-advisor student (Morgan Silva to be used for alert tests)
-- Post Jira comments, including alert-test evidence on SCA-13
 
 **Decisions**
 - Absence counting in Apex (API 67.0+), scoring logic in Flow; project API 68.0
@@ -78,26 +78,27 @@
 - Use a regular Build session, not Agentforce Build
 
 **Blockers**
-- Data Cloud not provisioned in the org; PII masking cannot be enabled until a person sets it up in Setup
+- Delete-format test result unknown (printed nothing); error-visible retest awaiting approval
+- 33-record rehearsal awaiting approval
+- Data Cloud not provisioned in the org; PII masking cannot be enabled until set up in Setup
 - Real crisis contacts not in Counseling Center queue; UAT Counselor is a stand-in
 - Anonymous Apex reset of Skyler Adeyemi awaiting safety-check approval (recommended: decline)
 - SCA-2 awaiting delivery-lead review
 - Tone reviewer not named (question 12), blocking SCA-11 and SCA-18 sign-off
 - Unanswered questions 5, 6, 8-11 block dependent stories
-- Portal go-ahead (SCA-32) awaiting explicit approval
-- AttendanceEntry unusable from Flow in this org (workaround in Apex)
 
 **Next**
-- Reply 'continue' to push fix branches, open PRs, and run the Trust Layer deploy (approval cards may appear)
+- Approve the error-visible delete-format test, read the response, then rerun the 33-record rehearsal if the delete call works
 - Set up Data Cloud in Setup, then re-attempt PII masking
+- Reply 'continue' to push fix branches, open PRs, and run the Trust Layer deploy
 - Review and merge PRs #1 to #18 in number order, starting with #1; review #9 sharing change first
-- Run the Playwright QA script with UAT user credentials; run alert tests on Avery Chen and the no-advisor student
+- Run the Playwright QA script with UAT credentials; run alert tests on Avery Chen and the no-advisor student
 - Name a tone reviewer and obtain answers to questions 5, 6, 8-11
 - Decide the Skyler Adeyemi reset and the portal (SCA-32)
 - Replace the UAT Counselor stand-in with real crisis contacts
 
-**Checked live on 2026-11-20:** Google Workspace, the repository
-### Last session — 2026-11-20
+**Checked live on 2026-11-21:** the repository
+### Last session — 2026-11-21
 | | |
 |---|---|
 | Type | BUILD |
@@ -114,11 +115,16 @@
 Next: open/refresh the PR → review → merge to main → run a Deploy session to ship. This work is NOT live yet.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Everything you asked for is done on `fix/SCA-22-qa-fixes` (PR #25), except item 9: the "46 of 46" figure was wrong. The real result is 45 of 45. Nothing was merged and no records were changed. Items 5 and 6 are proposals waiting for your decision.
+The rehearsal worked. The nightly scorer took Jordan from 4 to 7 by itself. His alert, Task and bell notice went to you, and nobody else alerted. The 33 approved records are deleted, and a check afterwards found 0 of them left. The script is pushed to PR #25 (commit a0d952c, and the GitHub copy matches).
 
-## What changed
+## Test first
 
-1. **Handoff Summary prompt.** Crisis words anywhere between the markers now give the URGENT line, whatever the speaker label and even with no label. The S5-5 behaviour is unchanged. Because the old version was published, this is a new version: Prompt Builder shows it as Version 4, active (file suffix `_3`). The accepted speaker labels (`Student:`, `User:`, the student's first name, `Agent:`) are now in `docs/prompt-templates.md`. One known side effe
+The made-up ID test reached Salesforce this time, so the new delete call works. A well-formed ID that doesn't exist comes back as `INVALID_CROSS_REFERENCE_KEY`. The script doesn't depend on that code. When a delete fails, it looks the ID up, and only counts it as "already gone" if the record really no longer exists.
+
+## What's built into the script
+
+All seven of your items are in:
+- Each delete 
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
