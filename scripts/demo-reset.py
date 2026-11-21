@@ -26,8 +26,9 @@ second time straight away so you can see the alert now. --dry-run stops after th
 On demo morning run --check: one PASS/FAIL line each for Jordan, his alert/Task/outreach, other
 students, the expected score table and the scorer's last run. It only reads; it changes nothing.
 
-The script never deletes anything outside those 22 students, never touches the 220 bulk-test
-students, and never edits a risk score. Deleted records stay in the Recycle Bin for 15 days.
+The script never deletes anything outside those 22 students and never edits a risk score.
+Deleted records stay in the Recycle Bin for 15 days. (The 220 bulk-test students were deleted on
+2026-11-21. If they are ever reloaded, the student lookup still leaves their account out.)
 """
 import argparse
 import re

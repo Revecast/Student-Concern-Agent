@@ -41,8 +41,9 @@ Either works:
 5. Reloads with Jordan's last login 5 days back and puts the scorer back on **02:00 Pacific**. It
    prints `Jordan's alert will arrive at <demo day> 02:00 PST`.
 
-It never touches the 220 bulk-test students, never edits a risk score by hand, and never deletes
-anything else. Deleted records stay in the Recycle Bin for 15 days.
+It never edits a risk score by hand and never deletes anything else. Deleted records stay in the
+Recycle Bin for 15 days. (The 220 bulk-test students were deleted on 2026-11-21; if they are ever
+reloaded with `scripts/apex/load-bulk-test-students.apex`, the script still leaves them out.)
 
 ### Clear the bell (manual)
 
@@ -119,10 +120,10 @@ You land in **Service Console**. Everything below is in the **Student Concern** 
 
 ### Don't click
 
-- **All Contacts, My Contacts, New This Week / New Last Week, Recently Viewed** on Contacts, and
-  global search for words like "Student": they include the 220 bulk-test students (you own them,
-  some show scores up to 12) and UAT No-Advisor Student (score 7, blank reason). Use Demo Students
-  and search by full name.
+- **All Contacts, My Contacts, Recently Viewed** on Contacts, and global search for words like
+  "Student": they mix the demo students with UAT No-Advisor Student and the org's sample contacts
+  (Edge, GenePoint, United Oil and similar). UAT No-Advisor Student's risk score is blank on purpose
+  (cleared 2026-11-21). Use the Demo Students list view and search by full name.
 - **Edit** on the risk fields, or Setup → Flows → Debug/Run on the scorer: it changes scores.
 - The UAT Send Message Tester before the main walkthrough is done.
 - Prompt Builder previews with other students: not needed, and slow on stage.
@@ -202,7 +203,8 @@ the Advisor on the student's Advisee Record case team and gives that person:
 
 Each step is written to the outreach log. **No assigned advisor:** everything goes to the
 **Advising Queue** instead and an extra log row records the Advising Queue exception. Nobody else
-is ever alerted (ADR-001). The student's check-in is sent at the same time (ADR-014, SCA-15).
+is ever alerted (ADR-001). **Nothing is sent to the student.** The student check-in (SCA-15) is
+not built yet; when it is, it is meant to go out at the same time as the advisor alert (ADR-014).
 
 **Advising Queue members:** add people with
 `sf apex run -f scripts/apex/add-advising-queue-member.apex -o <org>` (edit the username at the
