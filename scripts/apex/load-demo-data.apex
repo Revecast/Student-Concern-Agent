@@ -28,6 +28,7 @@ VERSION  AUTHOR                 DATE         DETAIL    DESCRIPTION
 1.0      Revecast Orchestrate   19/11/2026   Created   SCA-8
 1.1      Revecast Orchestrate   19/11/2026   Updated   SCA-5: advisor account team
 1.2      Revecast Orchestrate   19/11/2026   Updated   SCA-8: last login anchored to midday
+1.3      Revecast Orchestrate   21/11/2026   Updated   SCA-45: demo day and Jordan login set by demo-reset.py
 *****************************************************************/
 
 // ---- Settings -------------------------------------------------------------
@@ -36,14 +37,20 @@ VERSION  AUTHOR                 DATE         DETAIL    DESCRIPTION
 String ADVISOR_USERNAME = 'ernie.maldonado@revecast.io.edupde';
 String KEY_PREFIX = 'DEMO';                       // prefix for every demo key
 String EMAIL_DOMAIN = 'student.jaxstate.example'; // reserved domain: never delivers
+// Demo day: every date below is counted back from it. scripts/demo-reset.py
+// replaces this line with the demo date; run on its own it is today.
 Date TODAY_DATE = Date.today();
+// Days since Jordan's last classroom login on the demo day. 5 (3 points) is the
+// demo value. demo-reset.py first loads 3 (0 points) and scores, so the nightly
+// run on the demo day takes Jordan from 4 to 7 by itself (SCA-45).
+Integer JORDAN_DAYS_SINCE_LOGIN = 5;
 
 // ---- Cohort definition ----------------------------------------------------
 // Each row: key, first, last, absences in the last 14 days,
 // days since last login, [current grade, grade two weeks ago] for the
 // three courses (BIO 101, ENG 101, MATH 110).
 List<List<Object>> cohort = new List<List<Object>>{
-    new List<Object>{'JORDAN', 'Jordan', 'Rivera', 2, 5, new List<Decimal>{84, 86, 81, 83, 88, 88}},
+    new List<Object>{'JORDAN', 'Jordan', 'Rivera', 2, JORDAN_DAYS_SINCE_LOGIN, new List<Decimal>{84, 86, 81, 83, 88, 88}},
     new List<Object>{'AVERY',  'Avery',  'Chen',    0, 11, new List<Decimal>{79, 79, 85, 85, 77, 78}},
     new List<Object>{'RILEY',  'Riley',  'Patel',   2, 1, new List<Decimal>{88, 88, 91, 90, 84, 85}},
     new List<Object>{'QUINN',  'Quinn',  'Okafor',  1, 2, new List<Decimal>{77, 81, 86, 86, 90, 90}},
