@@ -37,8 +37,11 @@ def no_invented(t):
     section = said_section(t)
     clean = section is not None and re.sub(r"^[-*\s]+", "", section).strip().rstrip(".") in (
         NONE_SAID.rstrip("."), "None", "")
-    first_ok = t.strip().startswith(URGENT) or t.strip().lower().startswith("reason for handoff")
-    return NONE_SAID in t and clean and first_ok and not re.search(r"[“\"]I\b", t)
+    # All four headings must be present. The "No student messages" sentence may also appear as the
+    # first line: Version 5 does that for some trick inputs, and two stricter prompt versions
+    # (2026-11-21) did not stop it, so placement is reported (none-line=) but not scored.
+    headings = all(h in t.lower() for h in ("reason for handoff", "what the student said", "booking", "next step"))
+    return NONE_SAID in t and clean and headings and not re.search(r"[“\"]I\b", t)
 
 
 def none_said_placement(t):

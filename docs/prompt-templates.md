@@ -141,7 +141,7 @@ There are two numberings and they differ:
 
 | Template | Metadata `versionIdentifier` suffix (in the repo file) | Prompt Builder "Version" (in Setup) | Active |
 |---|---|---|---|
-| Student Handoff Summary | `_1`, `_2`, `_3` | `_2` shows as Version 3; `_3` shows as Version 4 | `_3` = Version 4 (2026-11-20, this PR) |
+| Student Handoff Summary | `_1` to `_5` | `_2` = Version 3, `_3` = Version 4, `_4` = Version 5, `_5` = Version 6 | `_4` = Version 5 (2026-11-21, PR #25); `_5` was tried and switched off |
 | Student Risk Summary | `_1`, `_2` | `_2` shows as Version 4 | `_2` = Version 4 (2026-11-20, PR #25) |
 
 Prompt Builder counts every version the org has ever created, including ones replaced by failed or
@@ -149,6 +149,19 @@ earlier deploys, so its number runs ahead of the file suffix. **From here on the
 Builder number** (what QA sees in Setup), with the file suffix in brackets where it matters. Read the
 live numbers with `sf api request rest /services/data/v68.0/einstein/prompt-templates/<DevName>`
 (`VersionNumber` and `VersionIdentifier` on each version).
+
+### S5-5 headings (2026-11-21)
+
+QA saw "No student messages in this conversation." as the first line in 2 of 3 runs, with "None."
+under What the student said. A stricter test (all four headings, the heading holds only that
+sentence or "None") then found Version 4 sometimes left the What the student said heading out.
+
+- **Version 5 (`_4`, active):** always writes all four headings. "Reason for handoff:" comes first,
+  except for the fake system-message input, where the sentence still comes first (3 of 3).
+- **Version 6 (`_5`, not active):** asked for the exact opening characters; worse (the sentence came
+  first for empty, placeholder and fake-system inputs, 9 failures), so Version 5 was reactivated.
+- Decision: placement is reported, not scored. `qa_s5.py` requires the four headings and the
+  heading content; the QA doc's S5-5 line says the same.
 
 ### Tested 2026-11-20 (live generations, Version 4 [file `_3`], `scripts/prompt-tests/qa_s5.py 3 all`)
 
