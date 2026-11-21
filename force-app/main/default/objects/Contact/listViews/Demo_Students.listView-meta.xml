@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Demo_Students</fullName>
+    <columns>FULL_NAME</columns>
+    <columns>CONTACT.EMAIL</columns>
+    <columns>Risk_Score__c</columns>
+    <columns>Risk_Reason__c</columns>
+    <columns>Risk_Scored_At__c</columns>
+    <columns>Risk_Last_Alerted_Date__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>CONTACT.EMAIL</field>
+        <operation>contains</operation>
+        <value>@student.jaxstate.example</value>
+    </filters>
+    <filters>
+        <field>ACCOUNT.NAME</field>
+        <operation>notEqual</operation>
+        <value>DEMO - Bulk Test Students (safe to delete)</value>
+    </filters>
+    <label>Demo Students</label>
+</ListView>

@@ -1,0 +1,30 @@
+{
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "varB_IsAssigned" : {
+      "title" : "Var B Is Assigned",
+      "description" : "True only when the student is on the advisor's caseload.",
+      "lightning:type" : "lightning__booleanType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    },
+    "varT_Result" : {
+      "title" : "Var T Result",
+      "description" : "Plain result to relay when the student is not available.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : true,
+      "copilotAction:isUsedByPlanner" : true
+    },
+    "varT_StudentId" : {
+      "title" : "Var T Student Id",
+      "description" : "Student Id, blank unless assigned to the signed-in advisor.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

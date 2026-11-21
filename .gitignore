@@ -28,3 +28,6 @@ npm-debug.log*
 .probe/
 __pycache__/
 *.pyc
+
+# Demo reset exports (record data; never commit)
+demo-backups/

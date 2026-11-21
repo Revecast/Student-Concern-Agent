@@ -66,3 +66,21 @@ _Added automatically by Orchestrate when the turn finished._
 - Get the UAT advisor test users able to run the tester form and the agent summary as non-admin users
 
 _Added automatically by Orchestrate when the turn finished._
+
+## 2026-11-21 — Fixes from UAT round 2
+
+- Reset the demo environment by removing the 33 approved demo records and verifying none remain
+
+_Added automatically by Orchestrate when the turn finished._
+
+## 2026-11-21 — Fixes from UAT round 2
+
+- Run the demo org reset dry rehearsal and the 02:00 Pacific scoring run so Jordan crosses 6 on demo day
+
+_Added automatically by Orchestrate when the turn finished._
+
+## 2026-11-21 — Fixes from UAT round 2
+
+- Keep the demo runbook, risk-score doc, demo-reset script docstring and QA script doc consistent with the completed bulk-student delete before QA's morning check, with no org changes in the meantime
+
+_Added automatically by Orchestrate when the turn finished._

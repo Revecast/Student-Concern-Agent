@@ -51,21 +51,21 @@
 <!-- orchestrate:session-state:start -->
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
-### Engagement state — 2026-11-20
+### Engagement state — 2026-11-21
 **Status:** blocked — ━━ Build status (auto-checked from tool results — deploy = sf CLI exit, not runtime effect) ━━ • Code committed: yes (branch fix/SCA-22-qa-…
 
 **Done this session**
 - ━━ Build status (auto-checked from tool results — deploy = sf CLI exit, not runtime effect) ━━ • Code committed: yes (branch fix/SCA-22-qa-fixes) • Pushed to GitHub: yes • Validated (sf deploy validate): NOT verified • Deployed to org: no…
 
 **Open items**
-- All 25 PRs (#1 to #25) are pushed and open; none merged (corrected 2026-11-20)
+- Approve the error-visible delete-format test and read the response
+- Rerun the rehearsal deleting the 33 approved records (may trigger an Approve card)
+- Push the 4 fix branches and open their PRs (not pushed; no PRs open)
 - Merge PRs #1 to #18 in number order (not yet merged)
 - Set up Data Cloud in the org (manual, permanent) before PII masking can be turned on
 - Configure Trust Layer settings (PII masking on) and re-test the 4 prompt templates
-- Provide UAT user credentials to Claude as environment variables and run the Playwright QA script (credentials handed over, run not yet done)
+- Provide UAT user credentials as environment variables and run the Playwright QA script
 - Watch for Salesforce email verification codes when Playwright logs in from a new browser
-- Run alert tests on Avery Chen and the no-advisor student (Morgan Silva to be used for alert tests)
-- Post Jira comments, including alert-test evidence on SCA-13
 
 **Decisions**
 - Absence counting in Apex (API 67.0+), scoring logic in Flow; project API 68.0
@@ -78,26 +78,27 @@
 - Use a regular Build session, not Agentforce Build
 
 **Blockers**
-- Data Cloud not provisioned in the org; PII masking cannot be enabled until a person sets it up in Setup
+- Delete-format test result unknown (printed nothing); error-visible retest awaiting approval
+- 33-record rehearsal awaiting approval
+- Data Cloud not provisioned in the org; PII masking cannot be enabled until set up in Setup
 - Real crisis contacts not in Counseling Center queue; UAT Counselor is a stand-in
 - Anonymous Apex reset of Skyler Adeyemi awaiting safety-check approval (recommended: decline)
 - SCA-2 awaiting delivery-lead review
 - Tone reviewer not named (question 12), blocking SCA-11 and SCA-18 sign-off
 - Unanswered questions 5, 6, 8-11 block dependent stories
-- Portal go-ahead (SCA-32) awaiting explicit approval
-- AttendanceEntry unusable from Flow in this org (workaround in Apex)
 
 **Next**
-- Reply 'continue' to push fix branches, open PRs, and run the Trust Layer deploy (approval cards may appear)
+- Approve the error-visible delete-format test, read the response, then rerun the 33-record rehearsal if the delete call works
 - Set up Data Cloud in Setup, then re-attempt PII masking
+- Reply 'continue' to push fix branches, open PRs, and run the Trust Layer deploy
 - Review and merge PRs #1 to #18 in number order, starting with #1; review #9 sharing change first
-- Run the Playwright QA script with UAT user credentials; run alert tests on Avery Chen and the no-advisor student
+- Run the Playwright QA script with UAT credentials; run alert tests on Avery Chen and the no-advisor student
 - Name a tone reviewer and obtain answers to questions 5, 6, 8-11
 - Decide the Skyler Adeyemi reset and the portal (SCA-32)
 - Replace the UAT Counselor stand-in with real crisis contacts
 
-**Checked live on 2026-11-20:** Google Workspace, the repository
-### Last session — 2026-11-20
+**Checked live on 2026-11-21:** Google Workspace, the repository
+### Last session — 2026-11-21
 | | |
 |---|---|
 | Type | BUILD |
@@ -114,11 +115,11 @@
 Next: open/refresh the PR → review → merge to main → run a Deploy session to ship. This work is NOT live yet.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Everything you asked for is done on `fix/SCA-22-qa-fixes` (PR #25), except item 9: the "46 of 46" figure was wrong. The real result is 45 of 45. Nothing was merged and no records were changed. Items 5 and 6 are proposals waiting for your decision.
+All five items are done, and nothing in the org changed. The runbook edits are pushed to PR #25 (commit 5b6741a, and GitHub's copy matches). The QA doc is updated through the revecast connection. I left the Student Handoff Summary alone, so Prompt Builder Version 5 is still the active one for QA's retest.
 
-## What changed
+**One correction to my own earlier advice:** don't set UAT No-Advisor Student back to 7 before S2-9. The alert flow treats a blank score as 0, so going from blank to 7 counts as a crossing and fires the alert before the test even starts. S2-9's own steps (blank, then 5, then 7) already start it in the right place. The QA doc now says exactly that, in place of "set it to 7 first".
 
-1. **Handoff Summary prompt.** Crisis words anywhere between the markers now give the URGENT line, whatever the speaker label and even with no label. The S5-5 behaviour is unchanged. Because the old version was published, this is a new version: Prompt Builder shows it as Version 4, active (file suffix `_3`). The accepted speaker labels (`Student:`, `User:`, the student's first name, `Agent:`) are now in `docs/prompt-templates.md`. One known side effe
+**1 and 2. Runbook and scrip
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
@@ -169,3 +170,26 @@ Session 403e781d (Fixes from UAT round 2), same branch `fix/SCA-22-qa-fixes`.
 - **Cleanup Option A approved but NOT run.** Waits for Ernie's "go" after QA's final pass. Record list in the session reply; export first.
 - **qa_s5.py:** two observed cases. Figure of speech: no URGENT (3/3). Agent safety line: no URGENT (3/3), so the "accepted false alarm" does not happen; prompt unchanged, decision open.
 
+## Update 2026-11-21 (afternoon): overnight dress rehearsal set, SCA-45 tooling
+
+- Reset run 11:21–11:31 PST for demo date 2026-11-22 (4 records deleted: Jordan's Task, RA-0000007752, OUT-022444, OUT-022445). Jordan 4, nobody ≥6, no alerts. Scorer WAITING, next run 2026-11-22 02:00 PST. QA reads the org after 02:00; `python3 scripts/demo-reset.py --check` should show 5/5.
+- New: `--check` (read-only), `--score-now` (Plan B, ~3.3 min, tested), `scripts/crossing_table.py`, full click-path runbook in docs/demo-runbook.md. Scheduling moved to Python (works on macOS).
+- Student Handoff Summary: `_4` (Prompt Builder Version 5) active; `_5` (Version 6) tried and switched off. qa_s5.py 42/42.
+- Full RunLocalTests validation of all 25 PRs merged: 46/46, 0Afiw000001Sut7CAC (validation only).
+- Pending Ernie's decisions: bulk students (98 at score ≥6, owned by Ernie, visible in All/My Contacts), UAT No-Advisor Student (score 7), and whether to keep the bell quiet until 12/1.
+- PR #25 head a825cf5.
+
+## Update 2026-11-21 (evening): bulk students deleted, No-Advisor score blanked
+
+Ernie's decisions (ADR in session record): delete bulk students, blank UAT No-Advisor Student's score, leave the bell (Quinn 11/25, Riley and Casey 11/26, Taylor 11/30 will alert).
+- Deleted 1,545 records via Bulk API, 0 failed, 0 left on re-query: 880 AttendanceEntry, 4 AttendanceRecording (BULK-AR-1 to 4), 220 Classroom_Activity__c, 220 AcademicTermEnrollment, 220 'Bulk Student' contacts, account 'DEMO - Bulk Test Students (safe to delete)'. Recycle Bin until about 12/6. Backup: bulk-students-backup-2026-11-21.zip (session attachment). Reload: scripts/apex/load-bulk-test-students.apex.
+- UAT No-Advisor Student (003iw000003ezj5AAA) Risk Score now blank (was 7). Set it back to 7 before a UAT run of S2-9.
+- No contact in the org is at score 6 or more until the 02:00 PST 11/22 run (Jordan expected 4 → 7).
+
+## Update 2026-11-21 (late): docs after the bulk delete
+
+- Runbook section 1, "Don't click", section 10 (SCA-15 claim removed: nothing is sent to the student today), risk-score.md and the demo-reset.py docstring updated. Commit 5b6741a on PR #25, pushed (remote matches).
+- QA doc (second pass) updated: S1-9, S1-12, student table, S2-9 starting state, Suite 2 cleanup, Apex line.
+- **Correction to the earlier note "set UAT No-Advisor Student back to 7 before S2-9": don't.** RT – Contact – Risk Crossing uses BLANKVALUE(prior, 0), so blank to 7 is a crossing and fires the alert. S2-9's own steps (blank → 5 → 7) are right.
+- Full RunLocalTests on the current code (all 25 PRs merged, #25 at a825cf5): 46/46, 119 components, validation 0Afiw000001SvPNCA0, 2026-11-21 20:25–20:27 UTC. Validation only.
+- Student Handoff Summary not touched; Prompt Builder Version 5 stays active for QA's retest.

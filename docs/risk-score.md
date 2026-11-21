@@ -44,6 +44,7 @@ still waiting on the tone reviewer named for the demo.
 ## Testing at volume
 
 `scripts/apex/load-bulk-test-students.apex` loads 220 synthetic students under the account
-"DEMO - Bulk Test Students (safe to delete)". `scripts/apex/withdraw-bulk-test-students.apex`
+"DEMO - Bulk Test Students (safe to delete)". **Deleted 2026-11-21** (1,545 records, backup kept);
+reload with the same script if a bulk test is needed again. `scripts/apex/withdraw-bulk-test-students.apex`
 sets them to Withdrawn so the nightly run skips them (ADR-014). On 2026-11-19 a single run scored
 241 of 241 students, and every bulk score matched the expected value.

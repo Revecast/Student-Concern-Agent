@@ -193,8 +193,34 @@ private class StudentMessageActionTest {
         System.assertEquals('High', tasks[0].Priority, 'Crisis task should be urgent');
         System.assertEquals(Date.today(), tasks[0].ActivityDate, 'Crisis task should be due today');
         List<Student_Outreach__c> logs = logsFor(student.Id);
-        System.assertEquals('Counseling Center', logs[0].Recipient_Type__c, 'Recipient should be counseling');
-        System.assertEquals('Crisis', logs[0].Exception_Used__c, 'The Crisis exception should be logged');
+        System.assertEquals(2, logs.size(), 'One Task row and one notice row');
+        Integer taskRows = 0;
+        Integer noticeRows = 0;
+        for (Student_Outreach__c log : logs) {
+            System.assertEquals('Counseling Center', log.Recipient_Type__c, 'Recipient should be counseling');
+            System.assertEquals('Crisis', log.Exception_Used__c, 'The Crisis exception should be logged');
+            System.assertEquals('Sent', log.Status__c, 'Both rows should be Sent, not Failed: ' + log.Failure_Reason__c);
+            if (log.Channel__c == 'Task') {
+                taskRows++;
+            } else if (log.Channel__c == 'In-App Notification') {
+                noticeRows++;
+            }
+        }
+        System.assertEquals(1, taskRows, 'The crisis Task should be logged once');
+        System.assertEquals(1, noticeRows, 'The Counseling Center notice should be logged once');
+    }
+
+    /* The Counseling Center notice is sent only after a real crisis Task: no notice row
+       on any other send, and none on a refused send (checked in counselingWithoutCrisisIsRefused). */
+    @isTest
+    static void noCounselingNoticeOnOtherSends() {
+        Contact student = makeStudent(true, null);
+        Outcome outcome = send(student.Id, 'Assigned Advisor', false);
+
+        System.assert(outcome.sent, 'The Advising Queue task should be created');
+        System.assertEquals(0, [SELECT COUNT() FROM Student_Outreach__c
+            WHERE Student__c = :student.Id AND Channel__c = 'In-App Notification'],
+            'No notice should be sent for a non-crisis send');
     }
 
     /* Counseling Center without a crisis is refused: nothing sent, created or logged. */

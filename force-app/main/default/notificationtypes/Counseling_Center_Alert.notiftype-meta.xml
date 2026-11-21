@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomNotificationType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customNotifTypeName>Counseling Center Alert</customNotifTypeName>
+    <description>Tells the Counseling Center queue that an urgent crisis Task was just created for it. Sent only after the Task exists. Text carries no student data. SCA-36.</description>
+    <desktop>true</desktop>
+    <masterLabel>Counseling Center Alert</masterLabel>
+    <mobile>true</mobile>
+</CustomNotificationType>
