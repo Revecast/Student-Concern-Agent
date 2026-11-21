@@ -97,7 +97,7 @@
 - Decide the Skyler Adeyemi reset and the portal (SCA-32)
 - Replace the UAT Counselor stand-in with real crisis contacts
 
-**Checked live on 2026-11-21:** the repository
+**Checked live on 2026-11-21:** Google Workspace, the repository
 ### Last session — 2026-11-21
 | | |
 |---|---|
@@ -115,16 +115,11 @@
 Next: open/refresh the PR → review → merge to main → run a Deploy session to ship. This work is NOT live yet.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-The rehearsal worked. The nightly scorer took Jordan from 4 to 7 by itself. His alert, Task and bell notice went to you, and nobody else alerted. The 33 approved records are deleted, and a check afterwards found 0 of them left. The script is pushed to PR #25 (commit a0d952c, and the GitHub copy matches).
+All five items are done, and nothing in the org changed. The runbook edits are pushed to PR #25 (commit 5b6741a, and GitHub's copy matches). The QA doc is updated through the revecast connection. I left the Student Handoff Summary alone, so Prompt Builder Version 5 is still the active one for QA's retest.
 
-## Test first
+**One correction to my own earlier advice:** don't set UAT No-Advisor Student back to 7 before S2-9. The alert flow treats a blank score as 0, so going from blank to 7 counts as a crossing and fires the alert before the test even starts. S2-9's own steps (blank, then 5, then 7) already start it in the right place. The QA doc now says exactly that, in place of "set it to 7 first".
 
-The made-up ID test reached Salesforce this time, so the new delete call works. A well-formed ID that doesn't exist comes back as `INVALID_CROSS_REFERENCE_KEY`. The script doesn't depend on that code. When a delete fails, it looks the ID up, and only counts it as "already gone" if the record really no longer exists.
-
-## What's built into the script
-
-All seven of your items are in:
-- Each delete 
+**1 and 2. Runbook and scrip
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
@@ -175,3 +170,26 @@ Session 403e781d (Fixes from UAT round 2), same branch `fix/SCA-22-qa-fixes`.
 - **Cleanup Option A approved but NOT run.** Waits for Ernie's "go" after QA's final pass. Record list in the session reply; export first.
 - **qa_s5.py:** two observed cases. Figure of speech: no URGENT (3/3). Agent safety line: no URGENT (3/3), so the "accepted false alarm" does not happen; prompt unchanged, decision open.
 
+## Update 2026-11-21 (afternoon): overnight dress rehearsal set, SCA-45 tooling
+
+- Reset run 11:21–11:31 PST for demo date 2026-11-22 (4 records deleted: Jordan's Task, RA-0000007752, OUT-022444, OUT-022445). Jordan 4, nobody ≥6, no alerts. Scorer WAITING, next run 2026-11-22 02:00 PST. QA reads the org after 02:00; `python3 scripts/demo-reset.py --check` should show 5/5.
+- New: `--check` (read-only), `--score-now` (Plan B, ~3.3 min, tested), `scripts/crossing_table.py`, full click-path runbook in docs/demo-runbook.md. Scheduling moved to Python (works on macOS).
+- Student Handoff Summary: `_4` (Prompt Builder Version 5) active; `_5` (Version 6) tried and switched off. qa_s5.py 42/42.
+- Full RunLocalTests validation of all 25 PRs merged: 46/46, 0Afiw000001Sut7CAC (validation only).
+- Pending Ernie's decisions: bulk students (98 at score ≥6, owned by Ernie, visible in All/My Contacts), UAT No-Advisor Student (score 7), and whether to keep the bell quiet until 12/1.
+- PR #25 head a825cf5.
+
+## Update 2026-11-21 (evening): bulk students deleted, No-Advisor score blanked
+
+Ernie's decisions (ADR in session record): delete bulk students, blank UAT No-Advisor Student's score, leave the bell (Quinn 11/25, Riley and Casey 11/26, Taylor 11/30 will alert).
+- Deleted 1,545 records via Bulk API, 0 failed, 0 left on re-query: 880 AttendanceEntry, 4 AttendanceRecording (BULK-AR-1 to 4), 220 Classroom_Activity__c, 220 AcademicTermEnrollment, 220 'Bulk Student' contacts, account 'DEMO - Bulk Test Students (safe to delete)'. Recycle Bin until about 12/6. Backup: bulk-students-backup-2026-11-21.zip (session attachment). Reload: scripts/apex/load-bulk-test-students.apex.
+- UAT No-Advisor Student (003iw000003ezj5AAA) Risk Score now blank (was 7). Set it back to 7 before a UAT run of S2-9.
+- No contact in the org is at score 6 or more until the 02:00 PST 11/22 run (Jordan expected 4 → 7).
+
+## Update 2026-11-21 (late): docs after the bulk delete
+
+- Runbook section 1, "Don't click", section 10 (SCA-15 claim removed: nothing is sent to the student today), risk-score.md and the demo-reset.py docstring updated. Commit 5b6741a on PR #25, pushed (remote matches).
+- QA doc (second pass) updated: S1-9, S1-12, student table, S2-9 starting state, Suite 2 cleanup, Apex line.
+- **Correction to the earlier note "set UAT No-Advisor Student back to 7 before S2-9": don't.** RT – Contact – Risk Crossing uses BLANKVALUE(prior, 0), so blank to 7 is a crossing and fires the alert. S2-9's own steps (blank → 5 → 7) are right.
+- Full RunLocalTests on the current code (all 25 PRs merged, #25 at a825cf5): 46/46, 119 components, validation 0Afiw000001SvPNCA0, 2026-11-21 20:25–20:27 UTC. Validation only.
+- Student Handoff Summary not touched; Prompt Builder Version 5 stays active for QA's retest.
