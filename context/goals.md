@@ -84,3 +84,21 @@ _Added automatically by Orchestrate when the turn finished._
 - Keep the demo runbook, risk-score doc, demo-reset script docstring and QA script doc consistent with the completed bulk-student delete before QA's morning check, with no org changes in the meantime
 
 _Added automatically by Orchestrate when the turn finished._
+
+## 2026-11-24 — Testing
+
+- Sean Speer gives an impressive demo of the Student Concern agent to the AE team, with live alerts and summaries throughout the demo window.
+
+_Added automatically by Orchestrate when the turn finished._
+
+## 2026-11-24 — Sean Testing Procedures
+
+- Andrew wants Sean Speer, an AE, to be able to demo what has been built for the student concern agent, with all the permissions he needs and a thorough guide for an impressive demo.
+
+_Added automatically by Orchestrate when the turn finished._
+
+## 2026-11-24 — Sean Testing Procedures
+
+- Sean Speer presents the agent to universities at an event, so the demo must be ready for him
+
+_Added automatically by Orchestrate when the turn finished._

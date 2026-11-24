@@ -51,21 +51,21 @@
 <!-- orchestrate:session-state:start -->
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
-### Engagement state — 2026-11-21
-**Status:** blocked — ━━ Build status (auto-checked from tool results — deploy = sf CLI exit, not runtime effect) ━━ • Code committed: yes (branch fix/SCA-22-qa-…
+### Engagement state — 2026-11-24
+**Status:** blocked — ━━ Build status (auto-checked from tool results — deploy = sf CLI exit, not runtime effect) ━━ • Code committed: yes (branch fix/SCA-45-sea…
 
 **Done this session**
-- ━━ Build status (auto-checked from tool results — deploy = sf CLI exit, not runtime effect) ━━ • Code committed: yes (branch fix/SCA-22-qa-fixes) • Pushed to GitHub: yes • Validated (sf deploy validate): NOT verified • Deployed to org: no…
+- ━━ Build status (auto-checked from tool results — deploy = sf CLI exit, not runtime effect) ━━ • Code committed: yes (branch fix/SCA-45-sean-presenter) • Pushed to GitHub: yes • Validated (sf deploy validate): NOT verified • Deployed to or…
 
 **Open items**
+- Approve the read-only check command to verify tester access and list risk scores, alerts and 'Check in with…' Tasks, with errors visible
+- Read back the tester permission set assignment to confirm it
+- Set up the demo starting point if anything is missing
+- Write Sean's demo guide
 - Approve the error-visible delete-format test and read the response
 - Rerun the rehearsal deleting the 33 approved records (may trigger an Approve card)
 - Push the 4 fix branches and open their PRs (not pushed; no PRs open)
 - Merge PRs #1 to #18 in number order (not yet merged)
-- Set up Data Cloud in the org (manual, permanent) before PII masking can be turned on
-- Configure Trust Layer settings (PII masking on) and re-test the 4 prompt templates
-- Provide UAT user credentials as environment variables and run the Playwright QA script
-- Watch for Salesforce email verification codes when Playwright logs in from a new browser
 
 **Decisions**
 - Absence counting in Apex (API 67.0+), scoring logic in Flow; project API 68.0
@@ -78,48 +78,53 @@
 - Use a regular Build session, not Agentforce Build
 
 **Blockers**
-- Delete-format test result unknown (printed nothing); error-visible retest awaiting approval
+- Read-only check command awaiting approval; demo-data and profile check results unknown
+- Delete-format test result unknown; error-visible retest awaiting approval
 - 33-record rehearsal awaiting approval
 - Data Cloud not provisioned in the org; PII masking cannot be enabled until set up in Setup
 - Real crisis contacts not in Counseling Center queue; UAT Counselor is a stand-in
 - Anonymous Apex reset of Skyler Adeyemi awaiting safety-check approval (recommended: decline)
 - SCA-2 awaiting delivery-lead review
 - Tone reviewer not named (question 12), blocking SCA-11 and SCA-18 sign-off
-- Unanswered questions 5, 6, 8-11 block dependent stories
 
 **Next**
-- Approve the error-visible delete-format test, read the response, then rerun the 33-record rehearsal if the delete call works
+- Approve the read-only check command and read the results, including the tester permission set
 - Set up Data Cloud in Setup, then re-attempt PII masking
+- Approve the error-visible delete-format test, read the response, then rerun the 33-record rehearsal if the delete call works
 - Reply 'continue' to push fix branches, open PRs, and run the Trust Layer deploy
 - Review and merge PRs #1 to #18 in number order, starting with #1; review #9 sharing change first
 - Run the Playwright QA script with UAT credentials; run alert tests on Avery Chen and the no-advisor student
 - Name a tone reviewer and obtain answers to questions 5, 6, 8-11
 - Decide the Skyler Adeyemi reset and the portal (SCA-32)
-- Replace the UAT Counselor stand-in with real crisis contacts
 
-**Checked live on 2026-11-21:** Google Workspace, the repository
-### Last session — 2026-11-21
+**Checked live on 2026-11-24:** the repository
+### Last session — 2026-11-24
 | | |
 |---|---|
 | Type | BUILD |
 | Outcome | COMPLETED |
 | Branch | `main` |
-| Name | Fixes from UAT round 2 |
-| Session | `403e781d-73e9-4eba-a271-10fac14dc939` |
+| Name | Sean Testing Procedures |
+| Session | `33643920-3900-4edf-951d-0cb90f93cbc9` |
 **In its own words (excerpt):**
 ━━ Build status (auto-checked from tool results — deploy = sf CLI exit, not runtime effect) ━━
-• Code committed: yes (branch fix/SCA-22-qa-fixes)
+• Code committed: yes (branch fix/SCA-45-sean-presenter)
 • Pushed to GitHub: yes
 • Validated (sf deploy validate): NOT verified
 • Deployed to org: no deploy in this session run — if an earlier run deployed, verify in the target org
 Next: open/refresh the PR → review → merge to main → run a Deploy session to ship. This work is NOT live yet.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-All five items are done, and nothing in the org changed. The runbook edits are pushed to PR #25 (commit 5b6741a, and GitHub's copy matches). The QA doc is updated through the revecast connection. I left the Student Handoff Summary alone, so Prompt Builder Version 5 is still the active one for QA's retest.
+Sean is set up for the demo, and his demo guide is attached to this session.
 
-**One correction to my own earlier advice:** don't set UAT No-Advisor Student back to 7 before S2-9. The alert flow treats a blank score as 0, so going from blank to 7 counts as a crossing and fires the alert before the test even starts. S2-9's own steps (blank, then 5, then 7) already start it in the right place. The QA doc now says exactly that, in place of "set it to 7 first".
+**What the approved command showed**
+- **Crisis-notice access:** Sean's new tester permission is in place (1 row found), so he can run the crisis step.
+- **Demo data:** this part failed. The account this session uses (yours) couldn't see the risk fields: "No such column 'Risk_Score__c' on entity 'Contact'."
 
-**1 and 2. Runbook and scrip
+**What I did about it**
+1. **Gave your account read-only access to the student risk fields** so the data could be read. It's in the dev org only, and your account only gets read access. I then read the data with plain queries:
+   - Jordan Rivera is at 7. Everyone else is 5 or lower.
+   - The nightly scorer is scheduled and l
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
