@@ -16,7 +16,7 @@ VERSION  AUTHOR                 DATE        DETAIL    DESCRIPTION
 1.0      Revecast Orchestrate   19/11/2026  Created   SCA-14
 *****************************************************************/
 // Username of the person who works the Advising Queue. Default: the demo presenter.
-String QUEUE_MEMBER_USERNAME = 'ernie.maldonado@revecast.io.edupde';
+String QUEUE_MEMBER_USERNAME = 'sean.speer@jaxconsult.com.edudemopde';
 
 Group advisingQueue = [SELECT Id FROM Group WHERE DeveloperName = 'Advising_Queue' AND Type = 'Queue' LIMIT 1];
 User member = [SELECT Id FROM User WHERE Username = :QUEUE_MEMBER_USERNAME AND IsActive = true LIMIT 1];

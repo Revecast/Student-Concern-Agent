@@ -1,7 +1,9 @@
 # Demo runbook — Student Concern Agent (SCA-45)
 
-For the live demos on **2026-12-02 and 2026-12-03**. The presenter is Ernie Maldonado, who is also
-the assigned advisor for Jordan Rivera and most demo students. The story: the nightly scorer
+For the live demos on **2026-12-02 and 2026-12-03**. The presenter is **Sean Speer** (since
+2026-11-24; it was Ernie Maldonado before), who is also the assigned advisor for all 21 demo
+students (UAT advisors are also on Avery, Morgan and Riley). The scripts use Sean's username
+(`sean.speer@jaxconsult.com.edudemopde`). The story: the nightly scorer
 notices Jordan stopped logging in, his score crosses 6, and the alert, Task and bell notice reach
 his advisor with nobody typing.
 
@@ -22,7 +24,7 @@ Either works:
   ```
   Leave out `--yes`, so the script asks you to type RESET before it deletes anything.
   Needs **Python 3.9 or later** (it uses the standard `zoneinfo` module; no extra packages) and the
-  Salesforce CLI (`sf`, tested with 2.151.7) signed in to the org as your user (`sca-admin` on your
+  Salesforce CLI (`sf`, tested with 2.151.7) signed in to the org (`sca-admin` on your
   Mac). macOS's built-in Python 3.9 from the Xcode tools is enough. Nothing else: no `jq`, no GNU tools.
 - **Ask Orchestrate** in a Build session on this repo. It runs the same command against
   `jaxedupde-dev-ed` with `--yes` under your standing approval (deletes only Tasks, Record Alerts,

@@ -51,7 +51,7 @@ NO_ADVISOR_EMAIL = "uat.noadvisor@uat.student.jaxstate.example"
 EXPECTED_STUDENTS = 22  # 21 demo students + UAT No-Advisor Student
 ALERT_LIMIT = 6
 API = "v68.0"
-PRESENTER_USERNAME = "ernie.maldonado@revecast.io.edupde"  # same advisor as load-demo-data.apex
+PRESENTER_USERNAME = "sean.speer@jaxconsult.com.edudemopde"  # same advisor as load-demo-data.apex
 JORDAN_DEMO_LOGIN_DAYS = 5
 
 sys.path.insert(0, os.path.join(ROOT, "scripts"))

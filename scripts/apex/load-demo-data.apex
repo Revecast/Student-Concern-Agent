@@ -34,7 +34,7 @@ VERSION  AUTHOR                 DATE         DETAIL    DESCRIPTION
 // ---- Settings -------------------------------------------------------------
 // Username of the demo advisor (assigned advisor for every demo student).
 // Default: the presenter. Change here to use a different advisor user.
-String ADVISOR_USERNAME = 'ernie.maldonado@revecast.io.edupde';
+String ADVISOR_USERNAME = 'sean.speer@jaxconsult.com.edudemopde';
 String KEY_PREFIX = 'DEMO';                       // prefix for every demo key
 String EMAIL_DOMAIN = 'student.jaxstate.example'; // reserved domain: never delivers
 // Demo day: every date below is counted back from it. scripts/demo-reset.py
