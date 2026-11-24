@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """Student Concern Agent - demo reset (SCA-45).
 
-Run it the evening before a demo:
+Since 2026-11-24 nobody needs to run this before a demo: the scheduled Apex job
+StudentDemoDailyRefresh (01:30 Pacific) sets the demo up every night by itself, featuring Jordan
+plus one of Casey, Quinn and Taylor in turn (docs/demo-runbook.md section 1). Use --check any
+morning and --score-now as Plan B. The full reset below is still available for a clean slate:
 
     python3 scripts/demo-reset.py --demo-date 2026-12-02
 
@@ -23,8 +26,9 @@ What it does, in order (stops at the first problem):
 --rehearse uses today as the demo day and, instead of waiting for 02:00, runs the scorer a
 second time straight away so you can see the alert now. --dry-run stops after the export and the count by student.
 
-On demo morning run --check: one PASS/FAIL line each for Jordan, his alert/Task/outreach, other
-students, the expected score table and the scorer's last run. It only reads; it changes nothing.
+Any morning run --check: one PASS/FAIL line each for the two nightly jobs, the featured students,
+their alerts/Tasks, other students, today's expected score table and the scorer's last run. It only
+reads; it changes nothing.
 
 The script never deletes anything outside those 22 students and never edits a risk score.
 Deleted records stay in the Recycle Bin for 15 days. (The 220 bulk-test students were deleted on
@@ -310,9 +314,32 @@ def scores(org, student_ids):
                  "WHERE Id IN " + id_list(student_ids) + " ORDER BY Risk_Score__c DESC NULLS LAST, Name")
 
 
+# Daily refresh (StudentDemoDailyRefresh, nightly 01:30): Jordan every day plus one student in turn.
+# Keep in step with the Apex class.
+ROTATION = ["Casey Nguyen", "Quinn Okafor", "Taylor Brooks"]
+ROTATION_START = dt.date(2026, 11, 24)
+CROSSING_STORY = {"Jordan Rivera": (2, 5), "Casey Nguyen": (2, 1), "Quinn Okafor": (3, 2), "Taylor Brooks": (2, 6)}
+NORMAL_LOGIN = {"Jordan Rivera": 3}  # Jordan's normal story; every other student uses the loader table
+
+
+def featured_on(day):
+    """Students the 02:00 scorer takes over the limit on this day (same rule as the Apex class)."""
+    return ["Jordan Rivera", ROTATION[abs((day - ROTATION_START).days) % len(ROTATION)]]
+
+
+def expected_score(name, featured):
+    absences, login_days, grades = crossing_table.COHORT[name]
+    if name in featured:
+        absences, login_days = CROSSING_STORY[name]
+    elif name in NORMAL_LOGIN:
+        login_days = NORMAL_LOGIN[name]
+    return crossing_table.score(absences, login_days, grades, 0)
+
+
 def check(org, org_tz):
-    """Read-only demo-morning check. Prints one PASS/FAIL line per item and changes nothing."""
+    """Read-only morning check of the daily refresh. Prints one PASS/FAIL line per item; changes nothing."""
     today = dt.datetime.now(org_tz).date()
+    featured = featured_on(today)
     results = []
 
     def line(ok, label, detail):
@@ -323,77 +350,56 @@ def check(org, org_tz):
     ids = [s["Id"] for s in students]
     rows = {r["Name"]: r for r in query(org, "SELECT Id, Name, Risk_Score__c, Risk_Reason__c, Risk_Last_Alerted_Date__c, "
                                         "Risk_Scored_At__c FROM Contact WHERE Id IN " + id_list(ids))}
-    jordan = rows["Jordan Rivera"]
+    name_by_id = {r["Id"]: n for n, r in rows.items()}
     me = query(org, "SELECT Id FROM User WHERE Username = '" + PRESENTER_USERNAME + "'")[0]["Id"]
-    login = query(org, "SELECT Last_Login__c FROM Classroom_Activity__c WHERE Student__c = '" + jordan["Id"]
-                  + "' ORDER BY Last_Login__c DESC LIMIT 1")
-    login_day = dt.datetime.fromisoformat(login[0]["Last_Login__c"].replace("+0000", "+00:00")).astimezone(org_tz).date()
-    demo_day = login_day + dt.timedelta(days=JORDAN_DEMO_LOGIN_DAYS)
-    k = (today - demo_day).days
-    print("Org date %s; demo data dated to %s (demo day %+d)" % (today, demo_day, k))
+    print("Org date %s; featured today: %s" % (today, " and ".join(featured)))
 
-    # 1. Jordan at 7 with today's alert date
-    alerted = jordan["Risk_Last_Alerted_Date__c"]
-    line(jordan["Risk_Score__c"] == 7 and alerted == today.isoformat(), "Jordan at 7, alerted today",
-         "score %s, last alerted %s" % (jordan["Risk_Score__c"], alerted or "blank"))
+    # 1. both nightly jobs scheduled
+    jobs = {r["CronJobDetail"]["Name"].split("-")[0]: r for r in query(
+        org, "SELECT CronJobDetail.Name, State, NextFireTime FROM CronTrigger WHERE "
+        "CronJobDetail.Name = 'Student Demo Daily Refresh' OR CronJobDetail.Name LIKE 'SCH_Score_First_Year_Students%'")}
 
-    # 2. exactly one alert, one open Task, two outreach rows - all Jordan's, for the presenter
-    cases = [r["Id"] for r in query(org, "SELECT Id FROM Case WHERE ContactId IN " + id_list(ids))]
-    parents = id_list(ids + cases)
-    jordan_parents = set([jordan["Id"]] + [r["Id"] for r in query(
-        org, "SELECT Id FROM Case WHERE ContactId = '" + jordan["Id"] + "'")])
-    alerts = query(org, "SELECT Name, WhatId, ParentId, OwnerId FROM RecordAlert WHERE IsActive = true")
-    tasks = query(org, "SELECT Subject, WhoId, WhatId, OwnerId FROM Task WHERE IsClosed = false AND "
-                  "(WhoId IN " + id_list(ids) + " OR WhatId IN " + parents + ")")
-    outreach = query(org, "SELECT Name, Student__c, Channel__c, Recipient_User__c, Status__c FROM Student_Outreach__c "
-                     "WHERE Student__c IN " + id_list(ids))
-    ok_alerts = len(alerts) == 1 and (alerts[0]["WhatId"] in jordan_parents or alerts[0]["ParentId"] in jordan_parents) \
-        and alerts[0]["OwnerId"] == me
-    ok_tasks = len(tasks) == 1 and (tasks[0]["WhoId"] in jordan_parents or tasks[0]["WhatId"] in jordan_parents) \
-        and tasks[0]["OwnerId"] == me
-    ok_out = len(outreach) == 2 and all(o["Student__c"] == jordan["Id"] and o["Recipient_User__c"] == me
-                                        and o["Status__c"] == "Sent" for o in outreach) \
-        and sorted(o["Channel__c"] for o in outreach) == ["In-App Notification", "Task"]
-    line(ok_alerts and ok_tasks and ok_out, "One alert, one open Task, two outreach rows, all Jordan's, for you",
-         "active alerts in the org %d (%s); open Tasks %d; outreach rows %d (%s)" % (
-             len(alerts), ", ".join(a["Name"] for a in alerts) or "none", len(tasks), len(outreach),
-             ", ".join("%s %s" % (o["Name"], o["Channel__c"]) for o in outreach) or "none"))
+    def at(job):
+        return dt.datetime.fromisoformat(job["NextFireTime"].replace("+0000", "+00:00")).astimezone(org_tz)
+    refresh, scorer = jobs.get("Student Demo Daily Refresh"), jobs.get("SCH_Score_First_Year_Students")
+    ok = bool(refresh and scorer and refresh["State"] == "WAITING" and scorer["State"] == "WAITING"
+              and (at(refresh).hour, at(refresh).minute) == (1, 30) and at(scorer).hour == 2)
+    line(ok, "Daily refresh 01:30 and scorer 02:00 scheduled",
+         "refresh %s, scorer %s" % (at(refresh).strftime("%m-%d %H:%M") if refresh else "MISSING",
+                                    at(scorer).strftime("%m-%d %H:%M") if scorer else "MISSING"))
 
-    # 3. no other demo student at 6 or more (UAT No-Advisor Student is not a demo student)
+    # 2. featured students over the limit and alerted today
+    bad = ["%s %s/%s" % (n, rows[n]["Risk_Score__c"], rows[n]["Risk_Last_Alerted_Date__c"] or "blank")
+           for n in featured if (rows[n]["Risk_Score__c"] or 0) < ALERT_LIMIT
+           or rows[n]["Risk_Last_Alerted_Date__c"] != today.isoformat()]
+    line(not bad, "Featured students over %d and alerted today" % ALERT_LIMIT,
+         ", ".join(bad) or ", ".join("%s %s" % (n, rows[n]["Risk_Score__c"]) for n in featured))
+
+    # 3. one active alert and one open check-in Task per featured student, for the presenter
+    alerts = query(org, "SELECT Name, WhatId, OwnerId FROM RecordAlert WHERE IsActive = true AND WhatId IN " + id_list(ids))
+    tasks = query(org, "SELECT WhoId, OwnerId FROM Task WHERE IsClosed = false AND Subject LIKE 'Check in with%' "
+                  "AND WhoId IN " + id_list(ids))
+    a_names = sorted(name_by_id[a["WhatId"]] for a in alerts if a["OwnerId"] == me)
+    t_names = sorted(name_by_id[t["WhoId"]] for t in tasks if t["OwnerId"] == me)
+    line(a_names == sorted(featured) and len(alerts) == 2 and t_names == sorted(featured) and len(tasks) == 2,
+         "One alert and one open Task per featured student, for you",
+         "alerts %s; Tasks %s" % (", ".join(a_names) or "none", ", ".join(t_names) or "none"))
+
+    # 4. nobody else at 6 or more (UAT No-Advisor Student is not a demo student)
     high = ["%s %s" % (n, r["Risk_Score__c"]) for n, r in rows.items()
-            if n not in ("Jordan Rivera", "UAT No-Advisor Student") and (r["Risk_Score__c"] or 0) >= ALERT_LIMIT]
-    line(not high, "No other demo student at %d or more" % ALERT_LIMIT, ", ".join(high) or "nobody")
+            if n not in featured and n != "UAT No-Advisor Student" and (r["Risk_Score__c"] or 0) >= ALERT_LIMIT]
+    line(not high, "Nobody else at %d or more" % ALERT_LIMIT, ", ".join(high) or "nobody")
 
-    # 4. expected score table (the scoring model for this demo day)
-    # The evening before (demo day -1) the reset's first run scored Jordan with a 3-day login.
-    model = crossing_table.crossings(k + 1) if k >= 0 else {}
-    wrong = []
-    for name, (absences, login_days, grades) in crossing_table.COHORT.items():
-        if k >= 0:
-            expected = model[name][0][k]
-        else:
-            evening = crossing_table.JORDAN_EVENING_LOGIN if name == "Jordan Rivera" else login_days
-            expected = crossing_table.score(absences, evening, grades, k)
-        if rows[name]["Risk_Score__c"] != expected:
-            wrong.append("%s %s (expected %s)" % (name, rows[name]["Risk_Score__c"], expected))
-    line(not wrong, "Scores match the expected table for demo day %+d" % k,
-         ", ".join(wrong) if wrong else "21 of 21 as expected")
+    # 5. expected score table for today
+    wrong = ["%s %s (expected %s)" % (n, rows[n]["Risk_Score__c"], expected_score(n, featured))
+             for n in crossing_table.COHORT if rows[n]["Risk_Score__c"] != expected_score(n, featured)]
+    line(not wrong, "Scores match today's expected table", ", ".join(wrong) or "21 of 21 as expected")
 
-    # 5. the scorer's last run and its schedule
-    cron = query(org, "SELECT State, NextFireTime, PreviousFireTime FROM CronTrigger "
-                 "WHERE CronJobDetail.Name LIKE 'SCH_Score_First_Year_Students%'")
+    # 6. the scorer ran today
     demo_rows = [r for n, r in rows.items() if n != "UAT No-Advisor Student"]
-    last = max(dt.datetime.fromisoformat(r["Risk_Scored_At__c"].replace("+0000", "+00:00")) for r in demo_rows
-               if r["Risk_Scored_At__c"]).astimezone(org_tz)
     scored_today = sum(1 for r in demo_rows if r["Risk_Scored_At__c"] and dt.datetime.fromisoformat(
         r["Risk_Scored_At__c"].replace("+0000", "+00:00")).astimezone(org_tz).date() == today)
-    state = cron[0]["State"] if len(cron) == 1 else "%d schedules" % len(cron)
-    nxt = dt.datetime.fromisoformat(cron[0]["NextFireTime"].replace("+0000", "+00:00")).astimezone(org_tz) \
-        if len(cron) == 1 and cron[0]["NextFireTime"] else None
-    line(len(cron) == 1 and state == "WAITING" and scored_today == 21 and nxt is not None and nxt.hour == 2,
-         "Scorer ran today and is scheduled",
-         "last run %s (%d of 21 scored today); schedule %s, next run %s" % (
-             last.strftime("%Y-%m-%d %H:%M %Z"), scored_today, state, nxt.strftime("%Y-%m-%d %H:%M %Z") if nxt else "none"))
+    line(scored_today == 21, "Scorer ran today", "%d of 21 scored today" % scored_today)
 
     print("Scores now:")
     for name, r in sorted(rows.items(), key=lambda x: (-(x[1]["Risk_Score__c"] or 0), x[0])):

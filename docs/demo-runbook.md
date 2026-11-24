@@ -7,54 +7,49 @@ students (UAT advisors are also on Avery, Morgan and Riley). The scripts use Sea
 notices Jordan stopped logging in, his score crosses 6, and the alert, Task and bell notice reach
 his advisor with nobody typing.
 
-## 1. The evening before: reset
+## 1. Every night, automatically: the daily refresh
 
-**Start before midnight Pacific (3:00 AM Eastern).** The script refuses once the org's date
-(Pacific) equals the demo date. It takes about 10 minutes.
+**Nobody runs anything before a demo.** Since 2026-11-24 a scheduled Apex job,
+**Student Demo Daily Refresh** (`StudentDemoDailyRefresh`), runs every night at **01:30 Pacific**,
+half an hour before the real scorer (02:00). Each run:
 
-### Who runs it
+1. Moves the 21 demo students' attendance and last-login dates forward a day, so every student keeps
+   the same story relative to today. The data no longer ages into surprise alerts.
+2. Features **Jordan Rivera every day**, plus one other student in turn:
 
-Either works:
+   | Day | Second student | Why they cross |
+   |---|---|---|
+   | 11/24, 11/27, 11/30, 12/3 … | Casey Nguyen (3 → 7) | missed 2 classes; grade below C in BIO 101 |
+   | 11/25, 11/28, 12/1 … | Quinn Okafor (4 → 8) | missed 3 classes; grade dropped a letter in BIO 101 |
+   | 11/26, 11/29, 12/2 … | Taylor Brooks (2 → 7) | missed 2 classes; no classroom login in 6 days |
 
-- **You, on your Mac** (recommended for the demo nights, so you see the result yourself):
-  ```bash
-  cd Student-Concern-Agent && git pull
-  python3 scripts/demo-reset.py --demo-date 2026-12-02 --org sca-admin --dry-run   # look first
-  python3 scripts/demo-reset.py --demo-date 2026-12-02 --org sca-admin             # type RESET
-  ```
-  Leave out `--yes`, so the script asks you to type RESET before it deletes anything.
-  Needs **Python 3.9 or later** (it uses the standard `zoneinfo` module; no extra packages) and the
-  Salesforce CLI (`sf`, tested with 2.151.7) signed in to the org (`sca-admin` on your
-  Mac). macOS's built-in Python 3.9 from the Xcode tools is enough. Nothing else: no `jq`, no GNU tools.
-- **Ask Orchestrate** in a Build session on this repo. It runs the same command against
-  `jaxedupde-dev-ed` with `--yes` under your standing approval (deletes only Tasks, Record Alerts,
-  Student Outreach rows and emails on the 22 students, after the export).
+   It gives them the "crossing" version of their story and sets their score back to yesterday's
+   value (below 6) with Risk Last Alerted Date cleared.
+3. Closes earlier days: older Record Alerts on the demo students are switched off and older open
+   "Check in with …" Tasks are marked Completed. **Nothing is deleted** (the outreach log keeps
+   every day's rows).
 
-### What it does
+At **02:00** the real scorer runs; Jordan and the day's second student go over 6 and the normal
+flows send Sean the alert, Task and bell notice. The job never writes the score that triggers an
+alert. It only lowers a featured student's score, which the crossing flow ignores.
 
-1. Finds the 21 demo students and UAT No-Advisor Student (stops unless exactly 22).
-2. Exports every leftover Task, Record Alert, Student Outreach row and email on them, all fields,
-   to `demo-backups/<UTC time>/` (CSV and JSON; git ignores the folder), and prints the count by
-   object and by student. Deletes only IDs in that export.
-3. Deletes them one by one, stops at the first unexpected failure, then confirms 0 are left and
-   clears Risk Last Alerted Date on the 22.
-4. Loads the demo data dated to the demo day, with Jordan's last login 3 days back, and scores
-   once now: Jordan 4, nobody at 6 or more, no alerts.
-5. Reloads with Jordan's last login 5 days back and puts the scorer back on **02:00 Pacific**. It
-   prints `Jordan's alert will arrive at <demo day> 02:00 PST`.
+Only Casey, Quinn and Taylor rotate because their only assigned advisor is Sean. Avery, Morgan and
+Riley also have UAT advisors, so their alerts could go to someone else.
 
-It never edits a risk score by hand and never deletes anything else. Deleted records stay in the
-Recycle Bin for 15 days. (The 220 bulk-test students were deleted on 2026-11-21; if they are ever
-reloaded with `scripts/apex/load-bulk-test-students.apex`, the script still leaves them out.)
+**Turn it off:** Setup → Scheduled Jobs → delete **Student Demo Daily Refresh**. Turn it back on:
+`System.schedule('Student Demo Daily Refresh', '0 30 1 * * ?', new StudentDemoDailyRefresh());`
+(or `StudentDemoDailyRefresh.scheduleNightly();`) in anonymous Apex.
 
-### Clear the bell (manual)
+The old evening reset (`demo-reset.py --demo-date …`) still works for a full clean-up, but it is
+no longer needed. If you use it, the refresh carries on from it the next night.
 
-Old bell notices from rehearsals stay in the bell; Salesforce keeps notifications for 90 days and
-has no delete. The notifications API returned no notifications for this user when tried
-(2026-11-21), so the script can't clear them. Before or after the reset, in the browser: click
-the **bell → Mark all as read**. The only unread notice in the morning is then Jordan's.
+### The bell (optional)
 
-## 2. Demo morning: check (2 minutes)
+Bell notices from earlier days stay in the bell (Salesforce keeps them 90 days and has no delete).
+Unread ones pile up daily. **Mark all as read** whenever you like; that morning's notices arrive
+new either way.
+
+## 2. Any morning: check (2 minutes, optional)
 
 ```bash
 python3 scripts/demo-reset.py --org sca-admin --check
@@ -64,15 +59,17 @@ Read-only; it changes nothing. One PASS/FAIL line each:
 
 | Check | PASS when |
 |---|---|
-| Jordan at 7, alerted today | Risk Score 7 and Risk Last Alerted Date = today |
-| One alert, one open Task, two outreach rows | exactly one active Record Alert in the org and one open Task on the 22 students, both Jordan's and owned by you; two outreach rows (Task, In-App Notification) for Jordan, sent to you |
-| No other demo student at 6 or more | nobody besides Jordan (UAT No-Advisor Student is not counted) |
-| Scores match the expected table | all 21 match what the scoring rules give for this day (`scripts/crossing_table.py`) |
-| Scorer ran today and is scheduled | all 21 scored today; one schedule, WAITING, next run 02:00 |
+| Daily refresh 01:30 and scorer 02:00 scheduled | both jobs WAITING at those times |
+| Featured students over 6 and alerted today | Jordan and the day's second student at 6 or more, Risk Last Alerted Date = today |
+| One alert and one open Task per featured student, for you | exactly those two active alerts and two open "Check in with" Tasks on demo students, owned by the presenter |
+| Nobody else at 6 or more | UAT No-Advisor Student is not counted |
+| Scores match today's expected table | all 21 match the stories in section 1 |
+| Scorer ran today | all 21 scored today |
 
-It ends with `READY: 5 of 5 checks passed` and exit code 0, or `NOT READY` and exit code 1.
+It ends with `READY: 6 of 6 checks passed` and exit code 0, or `NOT READY` and exit code 1.
+First run on 2026-11-24 14:05 Pacific: 6 of 6.
 
-## 3. Plan B: Jordan still at 4 on demo morning
+## 3. Plan B: Jordan still at 4 in the morning
 
 The 02:00 run didn't fire or didn't finish. Run:
 
@@ -92,9 +89,10 @@ You land in **Service Console**. Everything below is in the **Student Concern** 
 
 1. **App Launcher** (nine dots, top left) → type **Student Concern** → open it.
 2. **Contacts** tab → list view picker → **Demo Students**. Pin it (pin icon) so it opens by
-   default. It shows the 21 demo students with their scores: Jordan 7, Avery 5, Quinn 4, Riley 4,
-   Casey 3, Morgan 3, Taylor 2, the other 14 at 0.
-3. **Bell** (top right): one new notice, "Student check-in needed" / "A student on your caseload
+   default. It shows the 21 demo students with their scores: Jordan 7, Avery 5, Riley 4, Morgan 3,
+   the other 14 at 0, and Casey, Quinn and Taylor at their normal score except the one featured
+   today, who is at 7 or 8 (section 1).
+3. **Bell** (top right): two new notices (Jordan's and the day's second student's), "Student check-in needed" / "A student on your caseload
    crossed the risk limit. Open the record for details." Point out it names no student.
 4. Open **Jordan Rivera** from the list. Show:
    - the risk fields: Risk Score 7, Risk Reason "Missed 2 classes in the last 14 days; no
@@ -132,33 +130,14 @@ You land in **Service Console**. Everything below is in the **Student Concern** 
 
 ## 5. The second day
 
-Evening of 2026-12-02, before midnight Pacific:
+Nothing to do: the daily refresh sets it up again overnight. On 12/3 Jordan has a fresh alert,
+Task and bell notice dated 12/3, and the second student is Casey (12/2 it is Taylor).
 
-```bash
-python3 scripts/demo-reset.py --demo-date 2026-12-03 --org sca-admin   # type RESET
-```
+## 6. How long it holds
 
-Then mark the bell read, and on 2026-12-03 run `--check` again. Day 2 then looks exactly like day
-1, with today's dates.
-
-If you skip it: on 12/3 Jordan is still 7, but his alert, Task and bell notice are dated 12/2
-(the 7-day cooldown stops a second alert), so `--check` fails its first line; nobody else alerts
-on 12/3. Other students start crossing on 12/5 (section 6).
-
-## 6. How long a reset holds
-
-Data dated to demo day D ages each night. Without another reset, the nightly run alerts you about:
-
-| Night (02:00 Pacific) | Student | Score |
-|---|---|---|
-| D | Jordan Rivera | 4 → 7 (the demo) |
-| D + 3 | Quinn Okafor | 4 → 7 |
-| D + 4 | Riley Patel, Casey Nguyen | 4 → 7, 3 → 6 |
-| D + 8 | Taylor Brooks | 5 → 7 |
-
-So **12/3 is safe after a 12/1 reset for 12/2**: no new alert on 12/3. The full day-by-day table
-for any load: `python3 scripts/crossing_table.py --demo-date <D>` (read-only; it replays the
-scoring rules, and it predicted Quinn's real 11/21 alert from the earlier load).
+Indefinitely, while the job is scheduled: every night gives the same picture with that day's
+dates. (Before 2026-11-24 the data aged and other students started alerting a few days after a
+reset; `scripts/crossing_table.py` models that older behaviour.)
 
 ## 7. Who the scorer runs as
 
@@ -172,7 +151,7 @@ demo it's simpler to expect Andrew's name. (The setting isn't deployable metadat
 ## 8. Plain data reload (no reset)
 
 `scripts/load-demo-data.sh <org>` reloads the cohort dated to today without deleting anything or
-scoring. Prefer `demo-reset.py` before a demo.
+scoring. The daily refresh moves the dates on from there the next night.
 
 ## 9. Background: who can see which student (SCA-5)
 
