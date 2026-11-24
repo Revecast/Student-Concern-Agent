@@ -52,10 +52,10 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-11-24
-**Status:** blocked — ━━ Build status (auto-checked from tool results — deploy = sf CLI exit, not runtime effect) ━━ • Code committed: yes (branch fix/SCA-45-sea…
+**Status:** blocked — ━━ Build status (auto-checked from tool results — deploy = sf CLI exit, not runtime effect) ━━ • Code committed: yes (branch feature/SCA-45…
 
 **Done this session**
-- ━━ Build status (auto-checked from tool results — deploy = sf CLI exit, not runtime effect) ━━ • Code committed: yes (branch fix/SCA-45-sean-presenter) • Pushed to GitHub: yes • Validated (sf deploy validate): NOT verified • Deployed to or…
+- ━━ Build status (auto-checked from tool results — deploy = sf CLI exit, not runtime effect) ━━ • Code committed: yes (branch feature/SCA-45-demo-daily-refresh) • Pushed to GitHub: yes • Validated (sf deploy validate): yes • Deployed to org…
 
 **Open items**
 - Approve the read-only check command to verify tester access and list risk scores, alerts and 'Check in with…' Tasks, with errors visible
@@ -108,23 +108,18 @@
 | Session | `33643920-3900-4edf-951d-0cb90f93cbc9` |
 **In its own words (excerpt):**
 ━━ Build status (auto-checked from tool results — deploy = sf CLI exit, not runtime effect) ━━
-• Code committed: yes (branch fix/SCA-45-sean-presenter)
+• Code committed: yes (branch feature/SCA-45-demo-daily-refresh)
 • Pushed to GitHub: yes
-• Validated (sf deploy validate): NOT verified
-• Deployed to org: no deploy in this session run — if an earlier run deployed, verify in the target org
-Next: open/refresh the PR → review → merge to main → run a Deploy session to ship. This work is NOT live yet.
+• Validated (sf deploy validate): yes
+• Deployed to org: yes — jaxedupde-dev-ed · NOT read back from the org: the deploy's result listed no components (run it with --json, and not --async, so Orchestrate can check the org)
+• Scheduled job: scheduled + CronTrigger checked
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Sean is set up for the demo, and his demo guide is attached to this session.
+The demo now sets itself up every night, nobody has to do anything the night before, and Sean already has his first real alerts.
 
-**What the approved command showed**
-- **Crisis-notice access:** Sean's new tester permission is in place (1 row found), so he can run the crisis step.
-- **Demo data:** this part failed. The account this session uses (yours) couldn't see the risk fields: "No such column 'Risk_Score__c' on entity 'Contact'."
-
-**What I did about it**
-1. **Gave your account read-only access to the student risk fields** so the data could be read. It's in the dev org only, and your account only gets read access. I then read the data with plain queries:
-   - Jordan Rivera is at 7. Everyone else is 5 or lower.
-   - The nightly scorer is scheduled and l
+**What runs on its own now**
+- **1:30 AM Pacific, every night:** a new background job in the dev org ("Student Demo Daily Refresh") moves the demo students' attendance and login dates forward a day, so the data never goes stale. It sets Jordan, plus one other student that changes each day (Casey, Quinn or Taylor), back to yesterday's score. It also closes the previous days' alerts and "Check in with…" Tasks so Sean's screen stays clean. Nothing is deleted.
+- **2:00 AM:** the real scorer runs. Jordan and that day's second student go over the limit, and Sean ge
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
@@ -198,3 +193,10 @@ Ernie's decisions (ADR in session record): delete bulk students, blank UAT No-Ad
 - **Correction to the earlier note "set UAT No-Advisor Student back to 7 before S2-9": don't.** RT – Contact – Risk Crossing uses BLANKVALUE(prior, 0), so blank to 7 is a crossing and fires the alert. S2-9's own steps (blank → 5 → 7) are right.
 - Full RunLocalTests on the current code (all 25 PRs merged, #25 at a825cf5): 46/46, 119 components, validation 0Afiw000001SvPNCA0, 2026-11-21 20:25–20:27 UTC. Validation only.
 - Student Handoff Summary not touched; Prompt Builder Version 5 stays active for QA's retest.
+
+## Update 2026-11-24 (afternoon): demo runs itself daily (PR #27)
+
+- Scheduled job "Student Demo Daily Refresh" (01:30 PST) + scorer (02:00 PST) give Sean real alerts every morning: Jordan + one of Casey/Quinn/Taylor. No night-before reset is needed for 12/2–12/3 (12/2 second student Taylor, 12/3 Casey).
+- Deployed 0Afiw000001VLZ3CAO; first run 2026-11-24 14:03 PST: Jordan 7 and Casey 7, alerts and Tasks owned by Sean; `--check` 6/6.
+- PR #27 (`feature/SCA-45-demo-daily-refresh`, 667d268) stacked on #26 → #25. Runbook sections 1, 2, 5 and 6 rewritten.
+- Still for people: Sean rehearses once in the Agentforce panel; turn the job off after the event.

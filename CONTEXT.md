@@ -44,12 +44,13 @@ An Agentforce demo for higher education. A nightly rule-based score spots first-
 - [`context/gotchas.md`](context/gotchas.md) — what will bite you
 - [`context/history.md`](context/history.md) — shipped, parked and abandoned work
 - [`context/sessions/README.md`](context/sessions/README.md) — one record per session: what each did, decided and left open
-- Decisions in [`context/decisions/`](context/decisions/) (37, newest first):
+- Decisions in [`context/decisions/`](context/decisions/) (38, newest first):
   - [ADR-037 — Sean's demo: crisis tester in, Advising Queue path out, scripts name Sean](context/decisions/2026-11-24-sean-demo-scope-and-presenter-scripts.md)
   - [ADR-035 — Schedule the demo reset for the 12/2–12/3 slots with daily-recurring alerts](context/decisions/2026-11-24-schedule-the-demo-reset-for-the-12-212-3-slots-with-daily-re.md)
   - [ADR-033 — Make Sean Speer the demo advisor for all 21 demo students](context/decisions/2026-11-24-make-sean-speer-the-demo-advisor-for-all-21-demo-students.md)
   - [ADR-034 — Give Sean the permissions and licences the demo needs](context/decisions/2026-11-24-give-sean-the-permissions-and-licences-the-demo-needs.md)
   - [ADR-036 — Demo for Sean Speer runs on the existing Student Concern setup without the crisis-notice tester](context/decisions/2026-11-24-demo-for-sean-speer-runs-on-the-existing-student-concern-set.md)
+  - [ADR-038 — Daily demo refresh replaces the night-before reset](context/decisions/2026-11-24-daily-demo-refresh-no-night-before-reset.md)
   - [ADR-032 — Leave the advisor bell unchanged until the demo](context/decisions/2026-11-21-leave-the-advisor-bell-unchanged-until-the-demo.md)
   - [ADR-030 — Delete the 220 bulk-test students permanently, with backup kept](context/decisions/2026-11-21-delete-the-220-bulk-test-students-permanently-with-backup-ke.md)
   - [ADR-029 — Delete demo leftovers via per-record CLI delete, not the REST request body](context/decisions/2026-11-21-delete-demo-leftovers-via-per-record-cli-delete-not-the-rest.md)
